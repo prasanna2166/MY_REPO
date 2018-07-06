@@ -1,0 +1,4 @@
+Tools:
+salesforce sfdx cli
+informatica rest api to connect informatica cloud.
+powerbi

@@ -1,0 +1,6 @@
+Error Message:
+java.io.IOException: Unable to tunnel through proxy. Proxy returns "HTTP/1.1 407 Proxy Authentication Required"
+
+Solution:
+Add -Djdk.http.auth.tunneling.disabledSchemes="" in Jenkins.xml as below to overcome the proxy credential issues
+<arguments> -Djdk.http.auth.tunneling.disabledSchemes="" -Xrs -Xmx256m -Dhudson.lifecycle=hudson.lifecycle.WindowsServiceLifecycle -jar "%BASE%\jenkins.war" --httpPort=8080 --webroot="%BASE%\war"</arguments>

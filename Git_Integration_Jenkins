@@ -1,0 +1,9 @@
+Steps to install Git plugin
+1. Install Git plugin in jenkins UI.
+2. Install Git on the unix server.
+3. Logon to jenkins server(UNIX server) and create a public key as jenkins user.
+4. Copy the public key to github(in settings option)
+5. In jenkins server, connect to git repo using below command(one time step)
+	 ssh git@github01.lab.cloud-core.net
+Note: Step 5 is to eliminate ssh message. If it is not run, jenkins job will get failed as it will be prompting ssh message.
+END!!! 

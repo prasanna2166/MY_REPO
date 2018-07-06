@@ -1,0 +1,2233 @@
+#!/bin/bash
+## ----------------------------------------------------------------------------------------------------------------
+
+## USAGE
+
+## ------------------------------------------------------------------------
+function usage()
+{
+ echo -e "\nUsage:
+
+
+
+    1) DynamicESP.sh  <Product_name> <Environment> <Pause_variable>
+
+
+
+    Arguments are received via command line;
+
+
+
+    <Product_name>    Product_name can be any name of products such as "TAAS", "ECM"
+
+    <Environment>     Environment can be any environment such as "PF", "QA", "PP", "PN"
+
+        <Pause_variable>  Pause variable can be either "Pause" or "Nopause"
+
+    Examples
+
+        DynamicESP.sh ECM  PN pause
+
+        DynamicESP.sh TAAS PN-CSYS-AS-VS nopause"
+
+ echo -e "\n"
+
+ exit 0
+
+}
+
+
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## Argument Check - Total Arguments should be 3
+
+## ------------------------------------------------------------------------
+
+function argument_check()
+
+{
+
+if [ $Totalargument == 0 ]
+
+then
+
+echo -e "`date` : $processid: No Parameter Passed.....\n"                       | tee -a $logfile
+
+echo -e "`date` : $processid: For First parameter pass Product code name\n"                     | tee -a $logfile
+
+echo -e "`date` : $processid: For Second parameter pass Group name\n"                           | tee -a $logfile
+
+echo -e "`date` : $processid: For Third parameter pass PauseFlag (pass pause or nopause)\n"     | tee -a $logfile
+
+#echo -e "Try '$usagevariable usage' for more information"
+
+echo -e "`date` : $processid: Exiting.....\n"                                           | tee -a $logfile
+
+echo -e "Try '$usagevariable usage' for more information"
+
+echo -e "************************************************************************\n" | tee -a $logfile
+
+exit 1
+
+fi
+
+}
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## Argument One Check - Product name should be properly given
+
+## ------------------------------------------------------------------------
+
+function argument_one_check()
+
+{
+
+productcheck=$(cat $masterconfigloc | sed '/^#/d' | awk -F '_' '{print $1}' | sort | uniq )
+
+temporary2=$(echo $productcheck |(grep -o "$Productname"))
+
+if [ "$Productname" != "$temporary2" ]
+
+then
+
+echo -e "`date` : $processid: Please enter valid Product Name\n"                | tee -a $logfile
+
+echo -e "`date` : $processid: Exiting\n"                                | tee -a $logfile
+
+echo -e "Try '$usagevariable usage' for more information"
+
+echo -e "************************************************************************\n" | tee -a $logfile
+
+exit 1
+
+fi
+
+if [[ "$Productname" == "" ]]
+
+then
+
+echo -e "`date` : $processid: No parameter for product name passed....\n" | tee -a $logfile
+
+echo -e "`date` : $processid: Pass Productname\n"               | tee -a $logfile
+
+echo -e "`date` : $processid: Exiting....."                     | tee -a $logfile
+
+echo -e "Try '$usagevariable usage' for more information"
+
+echo -e "************************************************************************\n" | tee -a $logfile
+
+exit 1
+
+fi
+
+}
+
+
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## Argument Two Check - Environment name should be properly given
+
+## ------------------------------------------------------------------------
+
+function argument_two_check()
+
+{
+
+BIN_DIR="/home/scmportaladmin/bin"
+
+Load_Envs="`${BIN_DIR}/get_manifest_env "${Productname}"` exit";
+
+tempenvchk=$(echo "$Load_Envs" | grep -o -m1 "${GroupParameters}")
+
+if [[ "$GroupParameters" == "" ]] || [[ "$GroupParameters " != "${tempenvchk} " ]]
+
+then
+
+echo -e "`date` : $processid: No Parameter or Invalid Parameter For Environment Passed.....\n"               | tee -a $logfile
+
+echo -e "`date` : $processid: Pass atleast one Environment\n"                                   | tee -a $logfile
+
+echo -e "`date` : $processid: Exiting.....\n"                                                                   | tee -a $logfile
+
+echo -e "Try '$usagevariable usage' for more information"
+
+echo -e "************************************************************************\n" | tee -a $logfile
+
+exit 1
+
+fi
+
+#if [[ "$GroupParameters" == ""  ]]
+
+#then
+
+#echo -e "`date` : $processid: No Parameter For Environment Passed.....\n"               | tee -a $logfile
+
+#echo -e "`date` : $processid: Pass atleast one Environment\n"                                   | tee -a $logfile
+
+#echo -e "`date` : $processid: Exiting.....\n"                                                                   | tee -a $logfile
+
+#echo -e "Try '$usagevariable usage' for more information"
+
+#echo -e "************************************************************************\n" | tee -a $logfile
+
+#exit 1
+
+#fi
+
+#envcheck=$(cat $masterconfigloc | grep "$Productname"| grep -i "Environment" | awk -F'_' '{print $3}' | uniq)
+
+#temporaryenvcheck=$(echo $envcheck | grep -o "$GroupParameters")
+
+#env1check=$(cat $masterconfigloc | grep "$Productname"| grep -i "cluster" | awk -F'_' '{print $2}')
+
+#temporaryenv1check=$(echo $env1check | grep -o "$GroupParameters")
+
+#if [[ "$GroupParameters" != "$temporaryenvcheck" ]]
+
+#then
+
+#tempb="1"
+
+#echo -e "`date` : $processid: Please enter valid Environment Name\n"                | tee -a $logfile
+
+#echo -e "`date` : $processid: Exiting\n"                                | tee -a $logfile
+
+#echo -e "Try '$usagevariable usage' for more information"
+
+#echo -e "************************************************************************\n" | tee -a $logfile
+
+#exit 1
+
+#fi
+
+#if [[ $tempb = "1" ]]
+
+#then
+
+#if [[ "$GroupParameters" != "$temporaryenv1check" ]]
+
+#then
+
+#echo -e "`date` : $processid: Please enter valid Environment Name\n"                | tee -a $logfile
+
+#echo -e "`date` : $processid: Exiting\n"                                | tee -a $logfile
+
+#echo -e "Try '$usagevariable usage' for more information"
+
+#echo -e "************************************************************************\n" | tee -a $logfile
+
+#exit 1
+
+#fi
+
+#fi
+
+}
+
+
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## Argument Three Check - Does ESP scripts require pause or not
+
+## ------------------------------------------------------------------------
+
+function argument_three_check()
+
+{
+
+if [[ $PauseFlag == "" ]]
+
+then
+
+echo -e "`date` : $processid: Incorrect third Parameter Passed.....\n"          | tee -a $logfile
+
+echo -e "`date` : $processid: Pass 'pause' or 'nopause'\n"                                      | tee -a $logfile
+
+echo -e "`date` : $processid: Exiting.....\n"                           | tee -a $logfile
+
+echo -e "Try '$usagevariable usage' for more information"
+
+echo -e "************************************************************************\n" | tee -a $logfile
+
+exit 1
+
+fi
+
+if [[ $PauseFlag != "pause" ]] && [[ $PauseFlag != "nopause" ]]
+
+then
+
+echo -e "`date` : $processid: Incorrect third Parameter Passed.....\n"          | tee -a $logfile
+
+echo -e "`date` : $processid: Pass 'pause' or 'nopause'\n"                                      | tee -a $logfile
+
+echo -e "`date` : $processid: Exiting.....\n"                           | tee -a $logfile
+
+echo -e "Try '$usagevariable usage' for more information"
+
+echo -e "************************************************************************\n" | tee -a $logfile
+
+exit 1
+
+fi
+
+}
+
+
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## Internal Variables Assign
+
+## ------------------------------------------------------------------------
+
+function variable_assign()
+
+{
+
+PR=$Product
+
+#------
+
+#old code
+
+#------
+
+#PTRP=$(echo $PR | sed 's/ //g')
+
+#------------------------------------------------------------------------------
+
+#included two new variable PTRP & DB to get the values from masterconfig file
+
+#new variables PTRPJNAME & DBnam added to masterconfig file
+
+#------------------------------------------------------------------------------
+
+PTRP=$PTRPJNAME
+
+DB=$Dbnam
+
+DeactivateActivateFlagtemp=$(echo "$tempextra"_DACFLAG | sed 's/-/_/g')
+
+DeactivateActivateFlag=${!DeactivateActivateFlagtemp}
+
+ActivateFlagtemp=$(echo "$tempextra"_ACFLAG | sed 's/-/_/g')
+
+ActivateFlag=${!ActivateFlagtemp}
+
+DAFlag=$DeactivateActivateFlag
+
+ACFlag=$ActivateFlag
+
+PAFlag=$PauseFlag
+
+if [ $IsInstall == "install" ]
+
+then
+
+Installcode=Install
+
+filename="ESPAutomation_"$temp_filename"_"$PC".txt"
+
+unlocklasttemp=$(echo "$tempextra"_unlocklast | sed 's/-/_/g')
+
+unlocklast=${!unlocklasttemp}
+
+else
+
+Installcode=Fallback
+
+filename="ESPAutomation_"$temp_filename"FB_"$PC".txt"
+
+unlocklasttemp=$(echo "$tempextra"FB_unlocklast | sed 's/-/_/g')
+
+unlocklast=${!unlocklasttemp}
+
+fi
+
+}
+
+
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## Temp Function to fetch Group Names of that particular environment for the given product
+
+## ------------------------------------------------------------------------
+
+function customizegroups()
+
+{
+
+count=1
+
+tempx="$Productname"
+
+while IFS="_" read id content
+
+do
+
+[[ $(echo ${id}) != "$tempx" ]] && continue
+
+var[${count}]="${id}"
+
+var2[${count}]="${content}"
+
+(( count += 1 ))
+
+done < $masterconfigloc
+
+
+
+count2=1
+
+while (( count2 < count ))
+
+do
+
+echo "${var2[${count2}]}"
+
+(( count2 += 1 ))
+
+done >> new.txt
+
+}
+
+
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## Echoing Groups of given Product
+
+## ------------------------------------------------------------------------
+
+function splitgroups()
+
+{
+
+Group=$GroupParameters
+
+var=$(echo $Group | sed 's/-/_/g' | sed 's/,/ /g')
+
+for x in $var
+
+do
+
+if [[ $GP == "" ]]
+
+then
+
+temp="$x"
+
+GP=${!temp}
+
+else
+
+temp="$x"
+
+MP="${!temp}"
+
+GP="$GP","$MP"
+
+fi
+
+done
+
+echo -e "`date` : $processid: The Group(s) is/are $GP\n"        | tee -a $logfile
+
+}
+
+
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## Separating last field from Groups for Pause functionality
+
+## ------------------------------------------------------------------------
+
+function findlastfield()
+
+{
+
+var_a=$GP
+
+GP2=${var_a##*,}
+
+leng=$(expr length "$GP2")
+
+}
+
+
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## Groups without Last field
+
+## ------------------------------------------------------------------------
+
+function remainingfield()
+
+{
+
+##echo "The entire group is $GP"
+
+leng1=`expr $leng + 1`
+
+
+
+gplen=$(expr length "$GP")
+
+if [ $gplen -le  $leng1 ]
+
+then
+
+GP1=""
+
+else
+
+GP1=$(echo $GP | sed "s/.\{$leng1\}$//")
+
+fi
+
+}
+
+
+
+function tempfunct()
+
+{
+
+count=1
+
+while IFS="=" read id content
+
+do
+
+a[${count}]=${id}
+
+b[${count}]=${content}
+
+(( count += 1 ))
+
+done < new.txt
+
+count1=1
+
+while (( count1 < count ))
+
+do
+
+temp[${count1}]=$(echo ${a[${count1}]} | sed 's/-/_/g')
+
+echo ${temp[${count1}]}=${b[${count1}]}
+
+(( count1 += 1 ))
+
+done >> new1.txt
+
+}
+
+
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## Main Function to call Lock, Install and Deploy functions
+
+## ------------------------------------------------------------------------
+
+function continue1()
+
+{
+
+## Products which need Lock for Install
+
+LFI_temp=$(echo "$tempextra"_LOCKFRINS | sed 's/-/_/g' | sed 's/ //g')
+
+LFI=${!LFI_temp}
+
+echo -e "//////////////////////////////////////////////"  >> $pathvalue
+
+echo -e "//     \t\t\t\t\t    //" >>  $pathvalue
+
+if [ $IsInstall == "install" ]
+
+then
+
+echo -e "// Prepare For $PC $ENVIRONMENT Load   //" >> $pathvalue
+
+fi
+
+if [ $IsInstall == fallback ]
+
+then
+
+echo -e "// Prepare For $PC Prod Fallback   //" >> $pathvalue
+
+fi
+
+echo -e "//     \t\t\t\t\t    //" >> $pathvalue
+
+echo -e "//////////////////////////////////////////////" >> $pathvalue
+
+echo -e "\n" >> $pathvalue
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## Handoff and Resync for Installation
+
+## ------------------------------------------------------------------------
+
+
+
+#if condition to check e-pricing & other products to set the handoff project path
+
+#Added this new condition for P2 fix as per dynamicESP issue tracking spreadsheet
+
+
+
+if [[ $IsInstall == install && $PR == "e-Pricing" ]]
+
+then
+
+echo -e "HANDOFF PROJPATH='d:/SMRepository/Handoffs/"$Envcodehand"/"$PR"/"$Envcode".pj' CHKPT='' PTRPJ='"$PTRP"Deliverables_shared.pj' TIMEOUTMINS='10'" >> $pathvalue
+
+echo -e "MADSDECLI CMD='Resync' SVR='MADSHPPNAS0010A' ENV='$Envcodehand' Prod='$PR' PTRPJ='"$Envcode"' REQCPT='100' TIMEOUTMINS='30'" >> $pathvalue
+
+echo -e "\n" >> $pathvalue
+
+fi
+
+
+
+if [[ $IsInstall == install && $PR != "e-Pricing" ]]
+
+then
+
+echo -e "HANDOFF PROJPATH='d:/SMRepository/Handoffs/"$Envcodehand"/"$PR"/"$Envcode"Cluster.pj' CHKPT='' PTRPJ='"$PTRP"Deliverables_shared.pj' TIMEOUTMINS='10'" >> $pathvalue
+
+echo -e "MADSDECLI CMD='Resync' SVR='MADSHPPNVS0010V' ENV='$Envcodehand' Prod='$PR' PTRPJ='"$Envcode"Cluster' REQCPT='100' TIMEOUTMINS='30'" >> $pathvalue
+
+echo -e "\n" >> $pathvalue
+
+fi
+
+
+
+#---------
+
+#old code
+
+#---------
+
+#if [  $IsInstall == install ]
+
+#then
+
+#echo -e "HANDOFF PROJPATH='d:/SMRepository/Handoffs/"$Envcodehand"/"$PR"/"$Envcode"cluster.pj' CHKPT='' PTRPJ='"$PTRP"Deliverables_shared.pj' TIMEOUTMINS='10'" >> $pathvalue
+
+#echo -e "MADSDECLI CMD='Resync' SVR='MADSHPPNVS0010V' ENV='$Envcodehand' Prod='$PR' PTRPJ='"$Envcode"Cluster' REQCPT='100' TIMEOUTMINS='30'" >> $pathvalue
+
+#echo -e "\n" >> $pathvalue
+
+#fi
+
+
+
+
+
+if [[ $IsInstall == "install" && $IsExtract == 1 ]]
+
+then
+
+echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+echo -e "//  Extract all the attachments from IM Load      //" >> $pathvalue
+
+echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+echo -e "MADSDECLI CMD='Extract' TIMEOUTMINS='5'"  >> $pathvalue
+
+echo -e "\n" >> $pathvalue
+
+fi
+
+
+
+if [[ $IsInstall == "fallback" && $IsFBExtract == 1 ]]
+
+then
+
+echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+echo -e "//  Extract all the attachments from IM Load      //" >> $pathvalue
+
+echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+echo -e "MADSDECLI CMD='Extract' TIMEOUTMINS='5'"  >> $pathvalue
+
+echo -e "\n" >> $pathvalue
+
+fi
+
+
+
+if [ $IsInstall == "install" ]
+
+then
+
+echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+echo -e "// Deploy code to the entire group of servers //" >> $pathvalue
+
+echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+fi
+
+
+
+callagain1 $GP
+
+echo -e "\n" >> $pathvalue
+
+
+
+if [[ $IsInstall == "install" ]]
+
+then
+
+callagain2 $GP
+
+
+
+if [[ $LFI == 1 ]]
+
+then
+
+callagain2_temp
+
+echo -e "\n" >> $pathvalue
+
+fi
+
+
+
+echo -e "\n" >> $pathvalue
+
+fi
+
+if [[ $PAFlag == "pause" ]] && [[ $IsInstall == "install" ]]
+
+then
+
+echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+echo -e "// Programmatic unpause while deploy is validated  //" >> $pathvalue
+
+echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+echo -e "\n" >> $pathvalue
+
+echo -e "VFYTASK TASKNAME='"SCM"DEPLY'" >> $pathvalue
+
+echo -e "\n" >> $pathvalue
+
+fi
+
+
+
+if [[ $GP1 != "" ]]
+
+then
+
+callagain3 $GP1 $Installcode
+
+fi
+
+callagain4 $GP2 $Installcode
+
+
+
+if [[ $IsInstall == "install" ]]
+
+then
+
+sqllast_temp=$(echo "$tempextra"_sqllast | sed 's/-/_/g' | sed 's/ //g')
+
+sqllast=${!sqllast_temp}
+
+else
+
+sqllast_temp=$(echo "$tempextra"FB_sqllast | sed 's/-/_/g' | sed 's/ //g')
+
+sqllast=${!sqllast_temp}
+
+fi
+
+
+
+if [[ $sqllast == "1" ]]
+
+then
+
+echo -e "\n" >> $pathvalue
+
+sqllastfunc
+
+fi
+
+
+
+if [[ $unlocklast == 1 ]]
+
+then
+
+unlocklastfunc
+
+fi
+
+}
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## Function for LOCK functionality in ESP script
+
+## ------------------------------------------------------------------------
+
+function callagain1()
+
+{
+
+export IFS=","
+
+for variable in $GP
+
+do
+
+clust=$(grep -m1 $variable "new1.txt" | cut -d'=' -f1)
+
+b="$clust"_"Cluster"
+
+CL=${!b}
+
+echo -e "MADSDECLI CMD='Lock' ENV='$ENVIRONMENT' PROD='$PR' CLUSTER='$CL' GROUP='"$variable"' REQPCT='100' TIMEOUTMINS='20'" >> $pathvalue
+
+done
+
+}
+
+
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## Function for Deploy functionality in ESP script
+
+## ------------------------------------------------------------------------
+
+function callagain2()
+
+{
+
+export IFS=","
+
+for variable_1 in $GP
+
+do
+
+clust=$(grep -m1 $variable_1 "new1.txt" | cut -d'=' -f1)
+
+b="$clust"_"Cluster"
+
+CL=${!b}
+
+echo -e "MADSDECLI CMD='Deploy' ENV='$ENVIRONMENT' PROD='$PR' CLUSTER='$CL' GROUP='"$variable_1"' REQPCT='100' TIMEOUTMINS='20'" >> $pathvalue
+
+done
+
+}
+
+
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## Function for Unlock functionality in ESP script(For Separate Unlocks of Groups)
+
+## ------------------------------------------------------------------------
+
+function callagain2_temp()
+
+{
+
+export IFS=","
+
+for variable_1 in $GP
+
+do
+
+clust=$(grep -m1 $variable_1 "new1.txt" | cut -d'=' -f1)
+
+b="$clust"_"Cluster"
+
+CL=${!b}
+
+echo -e "MADSDECLI CMD='Unlock' ENV='$ENVIRONMENT' PROD='$PR' CLUSTER='$CL' GROUP='"$variable_1"' REQPCT='100' TIMEOUTMINS='20'" >> $pathvalue
+
+done
+
+}
+
+
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## Lock, Deactivate, Install for all the Groups except "Last Group"
+
+## ------------------------------------------------------------------------
+
+function callagain3()
+
+{
+
+m=1
+
+export IFS=","
+
+for variable_2 in $GP1
+
+do
+
+preinstallactivity $variable_2                         ## NEW function
+
+clust=$(grep -m1 $variable_2 "new1.txt" | cut -d'=' -f1)
+
+b="$clust"_"Cluster"
+
+CL=${!b}
+
+LFI_temp=$(echo "$tempextra"_LOCKFRINS | sed 's/-/_/g' | sed 's/ //g')
+
+LFI=${!LFI_temp}
+
+LFA_temp=$(echo "$tempextra"_LOCKFRACT | sed 's/-/_/g' | sed 's/ //g')
+
+LFA=${!LFA_temp}
+
+echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+echo -e "// \t$Installcode Code to the $tempgrp  Servers \t   //" >> $pathvalue
+
+echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+if [[ $LFI == 1 ]]
+
+then
+
+echo -e "MADSDECLI CMD='Lock' ENV='$ENVIRONMENT' PROD='$PR' CLUSTER='$CL' GROUP='"$variable"' REQPCT='100' TIMEOUTMINS='20'" >> $pathvalue
+
+fi
+
+if [[ $DAFlag == 1 ]]
+
+then
+
+echo -e "MADSDECLI CMD='Deactivate' ENV='$ENVIRONMENT' PROD='$PR' CLUSTER='$CL' GROUP='$variable_2' REQPCT='100' TIMEOUTMINS='5'" >> $pathvalue
+
+fi
+
+echo -e "MADSDECLI CMD='$Installcode' ENV='$ENVIRONMENT' PROD='$PR' CLUSTER='$CL' GROUP='$variable_2' LEVEL='1' REQPCT='100' TIMEOUTMINS='60'" >> $pathvalue
+
+if [[ $LFI == 1 ]]
+
+then
+
+echo -e "MADSDECLI CMD='Unlock' ENV='$ENVIRONMENT' PROD='$PR' CLUSTER='$CL' GROUP='$variable_3' REQPCT='100' TIMEOUTMINS='20'" >> $pathvalue
+
+fi
+
+echo -e "\n" >> $pathvalue
+
+if [[ $DAFlag == 1 ]] || [[ $ACFlag == 1 ]]
+
+then
+
+echo -e "\n" >> $pathvalue
+
+echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+echo -e "////     Activate $tempgrp Servers    //////////" >> $pathvalue
+
+echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+if [[ $LFA == 1 ]]
+
+then
+
+echo -e "MADSDECLI CMD='Lock' ENV='$ENVIRONMENT' PROD='$PR' CLUSTER='$CL' GROUP='"$variable"' REQPCT='100' TIMEOUTMINS='20'" >> $pathvalue
+
+fi
+
+echo -e "MADSDECLI CMD='Activate' ENV='$ENVIRONMENT' PROD='$PR' CLUSTER='$CL' GROUP='$variable_2' REQPCT='100' TIMEOUTMINS='5'" >> $pathvalue
+
+fi
+
+postinstallactivity $variable_2
+
+if [[ $PAFlag == "pause" ]]
+
+then
+
+echo -e "//////////////////////////////////////////////////////////////////////////////////////" >> $pathvalue
+
+echo -e "// Programmatic unpause while $Installcode is validated at $tempgrp servers //" >> $pathvalue
+
+echo -e "//////////////////////////////////////////////////////////////////////////////////////" >> $pathvalue
+
+
+
+if [ $IsInstall == "install" ]
+
+then
+
+        if [[ $m -le "9" ]]
+
+        then
+
+        echo -e "VFYTASK TASKNAME='"SCMUNP""0$m"'" >> $pathvalue
+
+        else
+
+        echo -e "VFYTASK TASKNAME='"SCMUNP""$m"'" >> $pathvalue
+
+        fi
+
+fi
+
+
+
+if [ $IsInstall == "fallback" ]
+
+then
+
+        if [[ $m -le "9" ]]
+
+        then
+
+        echo -e "VFYTASK TASKNAME='"SCMUNP""0$m"'" >> $pathvalue
+
+        else
+
+        echo -e "VFYTASK TASKNAME='"SCMUNP""$m"'" >> $pathvalue
+
+        fi
+
+fi
+
+
+
+echo -e "\n" >> $pathvalue
+
+fi
+
+m=`expr $m + 1`
+
+## Separate Sleep Function for Install
+
+
+
+slpforinstmp=$(echo "$tempextra"_slpforins)
+
+slpforins=${!slpforinstmp}
+
+if [[ $slpforins == 1 ]]
+
+then
+
+sepinssleeptmp1=$(echo "$tempextra"_sepsleep)
+
+sepinssleeptmp2=${!sepinssleeptmp1}
+
+sepinssleep=${!sepinssleeptmp2}
+
+echo -e "/////////////////////////////////////////////////////"   >> $pathvalue
+
+echo -e "// Sleep for 2 minutes         //"      >> $pathvalue
+
+echo -e "/////////////////////////////////////////////////////"     >> $pathvalue
+
+#if [ $IsInstall == "install" ]
+
+#then
+
+echo -e ""\$"SLEEPTIMER TIMESEC='$sepinssleep'"   >> $pathvalue
+
+echo -e "\n" >> $pathvalue
+
+#fi
+
+#if [ $IsInstall == "fallback" ]
+
+#then
+
+#echo -e ""\$"SLEEPTIMER TIMESEC='$sleepsec'"   >> $pathvalue
+
+#fi
+
+fi
+
+done
+
+}
+
+
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## Lock, Deactivate, Install for "Last group"
+
+## ------------------------------------------------------------------------
+
+function callagain4()
+
+{
+
+variable_2=$GP2
+
+preinstallactivity $variable_2
+
+clust=$(grep -m1 $variable_2 "new1.txt" | cut -d'=' -f1)
+
+b="$clust"_"Cluster"
+
+CL=${!b}
+
+LFI_temp=$(echo "$tempextra"_LOCKFRINS | sed 's/-/_/g' | sed 's/ //g')
+
+LFI=${!LFI_temp}
+
+LFA_temp=$(echo "$tempextra"_LOCKFRACT | sed 's/-/_/g' | sed 's/ //g')
+
+LFA=${!LFA_temp}
+
+echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+echo -e "// \t$Installcode Code to the $tempgrp  Servers \t   //" >> $pathvalue
+
+echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+if [[ $LFI == 1 ]]
+
+then
+
+echo -e "MADSDECLI CMD='Lock' ENV='$ENVIRONMENT' PROD='$PR' CLUSTER='$CL' GROUP='"$variable"' REQPCT='100' TIMEOUTMINS='20'" >> $pathvalue
+
+fi
+
+if [[ $DAFlag == 1 ]]
+
+then
+
+echo -e "MADSDECLI CMD='Deactivate' ENV='$ENVIRONMENT' PROD='$PR' CLUSTER='$CL' GROUP='$GP2' REQPCT='100' TIMEOUTMINS='5'" >> $pathvalue
+
+fi
+
+echo -e "MADSDECLI CMD='$Installcode' ENV='$ENVIRONMENT' PROD='$PR' CLUSTER='$CL' GROUP='$GP2' LEVEL='1' REQPCT='100' TIMEOUTMINS='60'" >> $pathvalue
+
+if [[ $LFI == 1 ]]
+
+then
+
+echo -e "MADSDECLI CMD='Unlock' ENV='$ENVIRONMENT' PROD='$PR' CLUSTER='$CL' GROUP='$variable_3' REQPCT='100' TIMEOUTMINS='20'" >> $pathvalue
+
+fi
+
+echo -e "\n" >> $pathvalue
+
+if [[ $DAFlag == 1 ]] || [[ $ACFlag == 1 ]]
+
+then
+
+echo -e "\n" >> $pathvalue
+
+echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+echo -e "////    Activate $tempgrp Servers    //////////" >> $pathvalue
+
+echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+echo -e "MADSDECLI CMD='Activate' ENV='$ENVIRONMENT' PROD='$PR' CLUSTER='$CL' GROUP='$GP2' REQPCT='100' TIMEOUTMINS='5'" >> $pathvalue
+
+fi
+
+postinstallactivity variable_2
+
+}
+
+
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## SQL (Common SQL Command)Functionalities for E-Products
+
+## ------------------------------------------------------------------------
+
+function commonsqlfunc()
+
+{
+
+if [[ $IsInstall == "install" ]]
+
+then
+
+sqlcmdvar="sqlfile"
+
+commentvar="Configuration Changes - run the *before sql script"
+
+else
+
+sqlcmdvar="FB_sqlfile"
+
+commentvar="Configuration Changes - run the *before sql script"
+
+fi
+
+sqlcommand_all $sqlcmdvar
+
+}
+
+
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## SQL (Group SQL Command) Functionalities for E-Products
+
+## ------------------------------------------------------------------------
+
+function groupsqlfunc()
+
+{
+
+if [[ $IsInstall == "install" ]]
+
+then
+
+sqlcmdvar=""$variable_2"_sqlfile"
+
+commentvar="Configuration Changes - run the *before sql script"
+
+else
+
+sqlcmdvar="FB_"$variable_2"_sqlfile"
+
+commentvar="Configuration Changes - run the *before sql script"
+
+fi
+
+sqlcommand_all $sqlcmdvar
+
+}
+
+
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## SQL Sub Function for E-Products
+
+## ------------------------------------------------------------------------
+
+function sqlofffunc()
+
+{
+
+if [[ $IsInstall == "install" ]]
+
+then
+
+sqlcmdvar="SQLOFF_"$variable_2""
+
+commentvar="TURN OFF"
+
+else
+
+sqlcmdvar="FB_SQLOFF_"$variable_2""
+
+commentvar="TURN OFF"
+
+fi
+
+sqlcommand_all $sqlcmdvar
+
+}
+
+
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## SQL Sub Function for E-Products
+
+## ------------------------------------------------------------------------
+
+function sqlonfunc()
+
+{
+
+if [[ $IsInstall == "install" ]]
+
+then
+
+sqlcmdvar="SQLON"
+
+commentvar="TURN ON"
+
+else
+
+sqlcmdvar="FB_SQLON"
+
+commentvar="TURN ON"
+
+fi
+
+sqlcommand_all $sqlcmdvar
+
+}
+
+
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## Sleep Function for E-Products - end
+
+## ------------------------------------------------------------------------
+
+function sqllastfunc()
+
+{
+
+if [[ $IsInstall == "install" ]]
+
+then
+
+sqlcmdvar="sqlfile_last"
+
+commentvar="Configuration Changes - run the *After sql script"
+
+else
+
+sqlcmdvar="FB_sqlfile_last"
+
+commentvar="Configuration Changes - run the *After sql script"
+
+fi
+
+sqlcommand_all $sqlcmdvar
+
+}
+
+
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## SQL Command for all
+
+## ------------------------------------------------------------------------
+
+function sqlcommand_all()
+
+{
+
+if [[ $IsInstall == "install" ]]
+
+then
+
+sqltemp=$(echo "$tempextra"_"$sqlcmdvar" | sed 's/ //g' | sed 's/-/_/g')
+
+sqlfile=${!sqltemp}
+
+else
+
+sqltemp=$(echo "$tempextra""$sqlcmdvar" | sed 's/ //g' | sed 's/-/_/g')
+
+sqlfile=${!sqltemp}
+
+fi
+
+for tempx in $sqlfile
+
+do
+
+echo -e "////////////////////////////////////////////" >> $pathvalue
+
+echo -e "// \t APPLY SQL ${commentvar}\t //"   >> $pathvalue
+
+echo -e "////////////////////////////////////////////" >> $pathvalue
+
+#--------------
+
+#oldcode
+
+#--------------
+
+#echo -e "SQLCMD INSTANCE='$sqlip' DB='$PR' SQLFILE='$tempx'" >> $pathvalue
+
+#-----------------------------------------------------------------------
+
+#Changed DB value as DB to get the database value from masterconfig file
+
+#Code changed for P2 fix as per dynamicESP issue tracking spreadsheet
+
+#------------------------------------------------------------------------
+
+echo -e "SQLCMD INSTANCE='$sqlip' DB='$DB' SQLFILE='$tempx'" >> $pathvalue
+
+echo -e "\n" >> $pathvalue
+
+done
+
+}
+
+
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## TPF Burstout Functionalities for E-Products
+
+## ------------------------------------------------------------------------
+
+function tpfofffunc()
+
+{
+
+echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+echo -e "// \t\t Turn off TPF traffic\t\t   //" >> $pathvalue
+
+echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+if [[ $IsInstall == "install" ]]
+
+then
+
+tpftemp=$(echo "$tempextra"_TPFOFF_"$variable_2" | sed 's/-/_/g')
+
+tpfvar=${!tpftemp}
+
+else
+
+tpftemp=$(echo "$tempextra"FB_TPFOFF_"$variable_2" | sed 's/-/_/g')
+
+tpfvar=${!tpftemp}
+
+fi
+
+export IFS=","
+
+for j in $tpfvar
+
+do
+
+echo -e "TPFBURSTOUT $j" >> $pathvalue
+
+done
+
+}
+
+
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## TPF Burstin Functionalities for E-Products
+
+## ------------------------------------------------------------------------
+
+function tpfonfunc()
+
+{
+
+echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+echo -e "// \t\t Turn on TPF traffic\t\t   //" >> $pathvalue
+
+echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+export IFS=","
+
+for j in $tpfvar
+
+do
+
+echo -e "TPFBURSTIN $j" >> $pathvalue
+
+done
+
+}
+
+
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## Sleep Function for E-Products - start
+
+## ------------------------------------------------------------------------
+
+function preinstalltimeframe()
+
+{
+
+if [[ $IsInstall == "install" ]]
+
+then
+
+sleepvar="sleepbeforeins"
+
+else
+
+sleepvar="FB_sleepbeforeins"
+
+fi
+
+sleep_command $sleepvar
+
+}
+
+
+
+function postinstalltimeframe()
+
+{
+
+if [[ $IsInstall == "install" ]]
+
+then
+
+sleepvar="sleepafterins"
+
+else
+
+sleepvar="FB_sleepafterins"
+
+fi
+
+sleep_command $sleepvar
+
+}
+
+
+
+function postgrouptimeframe()
+
+{
+
+templast=$GP2
+
+if [[ $variable_2 !=  $templast ]]
+
+then
+
+        if [[ $IsInstall == "install" ]]
+
+        then
+
+        sleepvar="aftergroup"
+
+        else
+
+        sleepvar="FB_aftergroup"
+
+        fi
+
+        sleep_command $sleepvar
+
+fi
+
+}
+
+
+
+function sepsleepfunc()
+
+{
+
+if [[ $IsInstall == "install" ]]
+
+then
+
+sleepvar="sepsleep"
+
+else
+
+sleepvar="FB_sepsleep"
+
+fi
+
+sleep_command $sleepvar
+
+}
+
+
+
+function sleep_command()
+
+{
+
+if [[ $IsInstall == "install" ]]
+
+then
+
+sleepsectemp1=$(echo "$tempextra"_"$sleepvar" | sed 's/-/_/g' | sed 's/ //g')
+
+sleepsectemp2=${!sleepsectemp1}
+
+sleepsec=${!sleepsectemp2}
+
+else
+
+sleepsectemp1=$(echo "$tempextra""$sleepvar" | sed 's/-/_/g' | sed 's/ //g')
+
+sleepsectemp2=${!sleepsectemp1}
+
+sleepsec=${!sleepsectemp2}
+
+fi
+
+checksleepfunc1 $sleepsec        ## call
+
+}
+
+
+
+function checksleepfunc1()
+
+{
+
+echo -e "/////////////////////////////////////////////"    >> $pathvalue
+
+echo -e "// \t\tPause\t\t\t   //"                                 >> $pathvalue
+
+echo -e "/////////////////////////////////////////////"    >> $pathvalue
+
+echo -e ""\$"SLEEPTIMER TIMESEC='$sleepsec'"                   >> $pathvalue
+
+echo -e "\n" >> $pathvalue
+
+}
+
+
+
+function unlocklastfunc()
+
+{
+
+echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+echo -e "//  Unlock entire group of servers  //" >> $pathvalue
+
+echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+export IFS=","
+
+for variable_3 in $GP
+
+do
+
+clust=$(grep -m1 $variable_3 "new1.txt" | cut -d'=' -f1)
+
+b="$clust"_"Cluster"
+
+CL=${!b}
+
+echo -e "MADSDECLI CMD='Unlock' ENV='$ENVIRONMENT' PROD='$PR' CLUSTER='$CL' GROUP='$variable_3' REQPCT='100' TIMEOUTMINS='20'" >> $pathvalue
+
+echo -e "\n" >> $pathvalue
+
+done
+
+}
+
+
+
+function preinstallactivity()
+
+{
+
+if [[ $IsInstall == "install" ]]
+
+then
+
+Issqltemp=$(echo "$tempextra"_SQL | sed 's/-/_/g' | sed 's/ //g' )
+
+Issql=${!Issqltemp}
+
+sqlip_temp=$(echo "$tempextra"_sqlip | sed 's/ //g' | sed 's/-/_/g')
+
+sqlip=${!sqlip_temp}
+
+commonsqltemp=$(echo "$tempextra"_commonsql | sed 's/-/_/g' | sed 's/ //g')
+
+commonsql=${!commonsqltemp}
+
+tpfofftemp=$(echo "$tempextra"_TPFONOFF | sed 's/-/_/g' | sed 's/ //g')
+
+tpfoff=${!tpfofftemp}
+
+sqlofftemp=$(echo "$tempextra"_SQLONOFF | sed 's/-/_/g' | sed 's/ //g')
+
+sqloff=${!sqlofftemp}
+
+rmstemp=$(echo "$tempextra"_NOSQL_"$variable_2" | sed 's/ //g' | sed 's/-/_/g')
+
+rms=${!rmstemp}
+
+rmsmaintemp=$(echo "$tempextra"_NOMAINSQL_"$variable_2" | sed 's/ //g' | sed 's/-/_/g')
+
+rmsmain=${!rmsmaintemp}
+
+separatetemp=$(echo "$tempextra"_separatesleep | sed 's/ //g' | sed 's/-/_/g')
+
+separatesleep1=${!separatetemp}
+
+PASQLtemp=$(echo "$tempextra"_pausesql | sed 's/ //g' | sed 's/-/_/g')
+
+PASQL=${!PASQLtemp}
+
+else
+
+Issqltemp=$(echo "$tempextra"FB_SQL | sed 's/-/_/g' | sed 's/ //g' )
+
+Issql=${!Issqltemp}
+
+sqlip_temp=$(echo "$tempextra"FB_sqlip | sed 's/ //g' | sed 's/-/_/g')
+
+sqlip=${!sqlip_temp}
+
+commonsqltemp=$(echo "$tempextra"FB_commonsql | sed 's/-/_/g' | sed 's/ //g')
+
+commonsql=${!commonsqltemp}
+
+tpfofftemp=$(echo "$tempextra"FB_TPFONOFF | sed 's/-/_/g' | sed 's/ //g')
+
+tpfoff=${!tpfofftemp}
+
+sqlofftemp=$(echo "$tempextra"FB_SQLONOFF | sed 's/-/_/g' | sed 's/ //g')
+
+sqloff=${!sqlofftemp}
+
+rmstemp=$(echo "$tempextra"FB_NOSQL_"$variable_2" | sed 's/ //g' | sed 's/-/_/g')
+
+rms=${!rmstemp}
+
+rmsmaintemp=$(echo "$tempextra"FB_NOMAINSQL_"$variable_2" | sed 's/ //g' | sed 's/-/_/g')
+
+rmsmain=${!rmsmaintemp}
+
+separatetemp=$(echo "$tempextra"FB_separatesleep | sed 's/ //g' | sed 's/-/_/g')
+
+separatesleep1=${!separatetemp}
+
+PASQLtemp=$(echo "$tempextra"FB_pausesql | sed 's/ //g' | sed 's/-/_/g')
+
+PASQL=${!PASQLtemp}
+
+fi
+
+
+
+## SQL ##
+
+if [[ $GP1 != "" ]]
+
+then
+
+if [[  $Issql == 1 ]] && [[ $commonsql == 1 ]] && [[ $m == 1 ]]       ##   Except last variable
+
+then
+
+commonsqlfunc                         #call
+
+if [[  $Issql == 1 ]] && [[ $separatesleep1 == "1" ]]
+
+then
+
+sepsleepfunc   ## call
+
+fi
+
+if [[ $PASQL == 1 ]]
+
+then
+
+echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+echo -e "// Programmatic unpause while SQL is validated  //" >> $pathvalue
+
+echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+echo -e "VFYTASK TASKNAME='"SCM"SQL'" >> $pathvalue
+
+echo -e "\n" >> $pathvalue
+
+fi
+
+fi
+
+else
+
+if [[  $Issql == 1 ]] && [[ $commonsql == 1 ]] && [[ $GP1 == "" ]]           ## For last variable
+
+then
+
+commonsqlfunc
+
+if [[  $Issql == 1 ]] && [[ $separatesleep1 == "1" ]]
+
+then
+
+sepsleepfunc   ## call
+
+fi
+
+if [[ $PASQL == 1 ]]
+
+then
+
+echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+echo -e "// Programmatic unpause while SQL is validated  //" >> $pathvalue
+
+echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+echo -e "VFYTASK TASKNAME='"SCM"SQL'" >> $pathvalue
+
+echo -e "\n" >> $pathvalue
+
+fi
+
+fi
+
+fi
+
+##  SQL  ##
+
+if [[ $tpfoff == 1 ]]
+
+then
+
+tpfofffunc
+
+echo -e "\n" >> $pathvalue
+
+preinstalltimeframe
+
+fi
+
+if [[ $sqloff == 1 ]] && [[ $rms == "" ]]
+
+then
+
+sqlofffunc
+
+echo -e "\n" >> $pathvalue
+
+preinstalltimeframe
+
+fi
+
+
+
+if [[ $GP1 != "" ]]
+
+then
+
+        if [[  $Issql == 1 ]] && [[ $commonsql == 0 ]]  && [[ $rmsmain == "" ]]
+
+        then
+
+        groupsqlfunc $variable_2                #call
+
+        if [[  $Issql == 1 ]] && [[ $separatesleep1 == "1" ]]
+
+        then
+
+        sepsleepfunc   ## call
+
+        fi
+
+        if [[ $PASQL == 1 ]]
+
+        then
+
+        echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+        echo -e "// Programmatic unpause while SQL is validated  //" >> $pathvalue
+
+        echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+        echo -e "VFYTASK TASKNAME='"SCM"SQL'" >> $pathvalue
+
+        echo -e "\n" >> $pathvalue
+
+        fi
+
+        fi
+
+else
+
+        if [[  $Issql == 1 ]] && [[ $commonsql == 0 ]]
+
+        then
+
+        variable_2=$GP2
+
+        groupsqlfunc $variable_2                #call
+
+        if [[  $Issql == 1 ]] && [[ $separatesleep1 == "1" ]]
+
+        then
+
+        sepsleepfunc   ## call
+
+        fi
+
+        if [[ $PASQL == 1 ]]
+
+        then
+
+        echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+        echo -e "// Programmatic unpause while SQL is validated  //" >> $pathvalue
+
+        echo -e "/////////////////////////////////////////////////////" >> $pathvalue
+
+        echo -e "VFYTASK TASKNAME='"SCM"SQL'" >> $pathvalue
+
+        echo -e "\n" >> $pathvalue
+
+        fi
+
+fi
+
+fi
+
+}
+
+
+
+function postinstallactivity()
+
+{
+
+if [[ $tpfoff == 1 ]]
+
+then
+
+postinstalltimeframe
+
+tpfonfunc
+
+echo -e "\n" >>  $pathvalue
+
+fi
+
+if [[ $sqloff == 1 ]] && [[ $rms == "" ]]
+
+then
+
+postinstalltimeframe
+
+sqlonfunc
+
+postgrouptimeframe
+
+fi
+
+if [[ $unlocklast != "1" ]]
+
+then
+
+echo -e "MADSDECLI CMD='Unlock' ENV='$ENVIRONMENT' PROD='$PR' CLUSTER='$CL' GROUP='$variable_2' REQPCT='100' TIMEOUTMINS='20'" >> $pathvalue
+
+echo -e "\n" >> $pathvalue
+
+fi
+
+if [[ $tpfoff == 1 ]]
+
+then
+
+postgrouptimeframe
+
+fi
+
+}
+
+
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## Trap Function
+
+## ------------------------------------------------------------------------
+
+function control_c()
+
+{
+
+echo -e "`date` : $processid: #### ESP Creation Aborted ####" | tee -a $logfile
+
+echo -e "`date` : $processid: Script Aborted by user" | tee -a $logfile
+
+echo -e "************************************************************************\n" | tee -a $logfile
+
+cleanup
+
+exit $?
+
+}
+
+
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## Trap Function
+
+## ------------------------------------------------------------------------
+
+function cleanup()
+
+{
+
+rm -f new*.txt
+
+rm -f ESP*.txt
+
+rm -rf $Productname
+
+}
+
+
+
+
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## Main Function
+
+## ------------------------------------------------------------------------
+
+processid=$(date +"%j%H%M%S")
+
+Totalargument=$#
+
+Productname=$1
+
+GroupParameters=$2
+
+PauseFlag=$(echo $3 | tr '[:upper:]' '[:lower:]')
+
+if [[ $1 == "usage" || $1 == "help" ]]; then
+
+    usage
+
+fi
+
+trap control_c SIGINT
+
+usagevariable=$(echo $0 | awk -F'/' '{print $2}')
+
+masterconfigloc="/home/scmportaladmin/scmcommon/win_mks_mtp/dynamicesp/Master_Config.txt"
+
+logfile="/home/scmportaladmin/scmcommon/win_mks_mtp/dynamicesp/dynamicesp.log"
+
+argument_check $Totalargument
+
+argument_one_check $Productname
+
+argument_two_check $GroupParameters
+
+argument_three_check $PauseFlag
+
+echo -e "`date` : $processid: ESP Script Creation Started\n"    | tee -a $logfile
+
+echo -e "`date` : $processid: Product Name given is '$Productname'\n"  | tee -a $logfile
+
+echo -e "`date` : $processid: Given environment is '$GroupParameters'\n" | tee -a $logfile
+
+echo -e "`date` : $processid: Pause Flag is '$PauseFlag'\n" | tee -a $logfile
+
+PC=$Productname
+
+tempextra=$GroupParameters
+
+customizegroups $Productname
+
+tempfunct
+
+. new1.txt
+
+grparam=$GroupParameters
+
+#tempgrp=${grparam%%'-'*}
+
+#tempenvname=$(echo $grparam | grep  -o "2")
+
+#if [[ $tempenvname == 2 ]]
+
+#then
+
+#tempgrp=${grparam##*'2'}
+
+#else
+
+#tempgrp=${grparam%%'-'*}
+
+#fi
+
+
+
+tempenvname=$(echo $grparam | sed -e 1s/"2"/"|"/ | grep -o "|" )
+
+if [[ $tempenvname == "|" ]]
+
+then
+
+tempgrp=$(echo $grparam | sed -e 1s/"2"/"|"/ | awk -F'|' '{print $2}');
+
+else
+
+tempgrp=${grparam%%'-'*}
+
+fi
+
+## Condition to give ESP script name as per process
+
+tempr_filename=$(echo $tempgrp | tr -d '[0-9]' | cut -d'-' -f1 | tr '[a-z]' '[A-Z]')
+
+if [[ $tempr_filename == "DEV" || $tempr_filename == "DV" ]]
+
+then
+
+temp_filename="DV"
+
+elif [[ $tempr_filename == "COPY" || $tempr_filename == "PP" || $tempr_filename == "PREPROD" ]]
+
+then
+
+temp_filename="PP"
+
+elif [[ $tempr_filename == "PN" || $tempr_filename == "PROD" ]]
+
+then
+
+temp_filename="PN"
+
+elif [[ $tempr_filename == "PF" || $tempr_filename == "PERF" ]]
+
+then
+
+temp_filename="PF"
+
+elif [[ $tempr_filename == "QA" || $tempr_filename == "qa" ]]
+
+then
+
+temp_filename="QA"
+
+#elif [[ $tempr_filename == "SG" || $tempr_filename == "sg" ]]
+
+else
+
+temp_filename="SG"
+
+fi
+
+# condition done
+
+
+
+#echo $temp_filename
+
+tempenv=$(echo Environment_"$tempgrp"_env | sed 's/-/_/g' | sed 's/ //g')
+
+ENVIRONMENT=${!tempenv}
+
+tempenvcode=$(echo Environment_"$tempgrp"_env_code | sed 's/-/_/g' | sed 's/ //g')
+
+Envcode=${!tempenvcode}
+
+temphandoff=$(echo Environment_"$tempgrp"_envhand_code  | sed 's/-/_/g' | sed 's/ //g')
+
+Envcodehand=${!temphandoff}
+
+IsExtract=${isextract}
+
+tempIsFBExtract=$(echo "$tempextra"FB_isextract | sed 's/-/_/g')
+
+IsFBExtract=${!tempIsFBExtract}
+
+splitgroups $GroupParameters
+
+findlastfield $GP
+
+remainingfield $leng $GP
+
+#ESPpath="/home/scmportaladmin/prasanna/ESP_DIR/$Productname/$GroupParameters"
+
+ESPpath="/home/scmportaladmin/scmcommon/win_mks_mtp/temp_esp_scripts/"
+
+if [[ ! -d $ESPpath ]]
+
+then
+
+mkdir -p $ESPpath
+
+fi
+
+
+
+
+
+## ----------------------------------------------------------------------------------------------------------------
+
+## Loop to Create ESP scripts for both Install and Fallback  ##
+
+## ------------------------------------------------------------------------
+
+ins_fall="install,fallback"
+
+export IFS=","
+
+for k in $ins_fall
+
+do
+
+IsInstall=$k
+
+variable_assign $IsInstall $Productname
+
+pathvalue="$ESPpath/$filename"
+
+rm -f $pathvalue
+
+touch $pathvalue
+
+continue1 $ENVIRONMENT
+
+done
+
+echo -e "`date` : $processid: Completed\n"      | tee -a $logfile
+
+echo -e "`date` : $processid: ESP scripts for Install and Fallback are created successfully\n"   | tee -a $logfile
+
+echo -e "************************************************************************\n" | tee -a $logfile
+
+trap "rm -rf new*.txt" EXIT
+
+exit 0;
+
+# -----------------------------------------------------------------
+
+# Finish
+
+# -----------------------------------------------------------------

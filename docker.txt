@@ -1,0 +1,29 @@
+Docker
+
+Create container:
+Docker create --name="container name"
+
+Start Container:
+docker start container-id(12digit id)
+
+Run container:
+docker run -d -ti ubuntu
+-d - daemon mode(background)
+-i - interative mode
+
+List all images:
+docker images
+
+List all containers:
+docker ps -a
+
+Stop container:
+docker stop container-id(12digit id)
+
+Remove container:
+docker rm container-id(12digit id)
+docker rm $(docker ps -a -q)  - to remove all containers
+
+Getting Inside a Running Container:
+ docker exec -t -i 589f2ad30138 /bin/bash
+ 

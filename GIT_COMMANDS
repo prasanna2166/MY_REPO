@@ -1,0 +1,74 @@
+GIT COMMANDS
+Configure username and Email:
+git config --global user.name ""
+git config --global user.email "email"
+
+List our settings:
+git config --list
+
+To ignore SSL certificate
+git config --global http.sslVerify false
+
+To add proxy into config file
+git config --global http.proxy 10.12.12.12:80
+
+Initialize Git repository or create repository:
+Go to the specific folder and run below command
+git init
+
+Add files/dir to the staging area:
+git add . 
+git add filename
+git add --all
+(Note: Above command should be run for every edit)
+
+Delete a branch:
+git branch -D branch_name
+
+Commit:
+git commit -m "Your comments"
+
+Commit directly to the repository(no staging area):
+git commit -am "comments"
+Note: this will commit all files
+
+commit history:
+git log
+git log --author="author name"
+
+Status(to know the branch name and also to see the untracked files):
+git status
+
+view changes:
+git diff (repo and working copy)
+Note:
+git diff => differences between working area and staging area (not working area and repository)
+git diff --staged => differences between staging area and repository
+git diff HEAD => differences between working area and repository
+
+Delete Files:
+git rm filename
+
+Move / Rename a file(from first.txt to home.txt):
+git mv first.txt home.txt
+Note:(unusual way)git add home.txt & git rm first.txt
+
+
+checkout:
+git checkout -- filename
+
+unstage files:
+git reset HEAD filename
+
+
+
+bare and nonbare:
+bare for central repository : no fill will be in edit mode
+nobare - remote repositories
+
+
+
+
+git commit --amend:
+combine staged changes with the previous commit.
+without any staged changes , it is to change previous commit message.
