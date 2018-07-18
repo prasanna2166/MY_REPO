@@ -22,6 +22,9 @@ git add filename
 git add --all
 (Note: Above command should be run for every edit)
 
+Crate a branch:
+git checkout -b branch_name
+
 Delete a branch:
 git branch -D branch_name
 
@@ -53,14 +56,11 @@ Move / Rename a file(from first.txt to home.txt):
 git mv first.txt home.txt
 Note:(unusual way)git add home.txt & git rm first.txt
 
-
 checkout:
 git checkout -- filename
 
 unstage files:
 git reset HEAD filename
-
-
 
 bare and nonbare:
 bare for central repository : no fill will be in edit mode
