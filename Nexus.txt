@@ -9,6 +9,8 @@ Upload via Jenkins
 ------------------
 nexusArtifactUploader artifacts: [[artifactId: 'Aras', classifier: '', file: 'D:\\Public\\Softwares\\ARAS.zip', type: 'zip']], credentialsId: '7886d946-c28f-4140-9a2f-2b25193e8259', groupId: 'org.test', nexusUrl: 'localhost:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'maven-releases', version: '6.0'
 
+nexusArtifactUploader artifacts: [[artifactId: 'OTA', classifier: '', file: 'D:\\\\Public\\\\Softwares\\\\OTA.zip', type: 'zip']], credentialsId: '7886d946-c28f-4140-9a2f-2b25193e8259', groupId: 'Aras', nexusUrl: 'localhost:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'aras-dev', version: '1.0'
+
 
 
 Download via wget
