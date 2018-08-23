@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Product Id="*" UpgradeCode="12345678-1234-1234-1234-222222222224" Version="1.0.0.0" Language="1033" Name="My Application Name" Manufacturer="My Manufacturer Name">
+        <Package InstallerVersion="300" Compressed="yes"/>
+        <Media Id="1" Cabinet="myapplication.cab" EmbedCab="yes" />
+
+        <!-- Step 1: Define the directory structure -->
+		<SetDirectory Id="D" Value="D:\Public\Softwares\wixtest" Sequence="both"/>
+        <Directory Id="TARGETDIR" Name="SourceDir">
+           <Directory Id="D">
+				<Directory Id="APPLICATIONROOTDIRECTORY" Name="Automation"/>
+            </Directory>
+        </Directory>
+
+ 
+        <!-- Step 2: Add files to your installer package -->
+        <DirectoryRef Id='D'>
+			<Component Id="commonConfig.xml" Guid="12345678-1234-1234-1234-222222222221">
+					<File Id="commonConfig.xml" Source="MySourceFiles\commonConfig.xml" KeyPath="yes" Checksum="yes"/>
+			</Component>
+			<Component Id="input.json" Guid="12345678-1234-1234-1234-222222222222">
+                <File Id="input.json" Source="MySourceFiles\input.json" KeyPath="yes" Checksum="yes"/>
+		    </Component>	
+		    <Component Id="Newtonsoft.Json.dll" Guid="12345678-1234-1234-1234-222222222223">
+                <File Id="Newtonsoft.Json.dll" Source="MySourceFiles\Newtonsoft.Json.dll" KeyPath="yes" Checksum="yes"/>
+            </Component>
+			<Component Id="Newtonsoft.Json.xml" Guid="12345678-1234-1234-1234-222222222224">
+                <File Id="Newtonsoft.Json.xml" Source="MySourceFiles\Newtonsoft.Json.xml" KeyPath="yes" Checksum="yes"/>
+            </Component>
+			<Component Id='Readme.md' Guid="12345678-1234-1234-1234-222222222225">
+			    <File Id='Readme.md' Source='MySourceFiles\Readme.md' KeyPath="yes" Checksum="yes"/>
+			</Component>
+			<Component Id='Organization.WS.Tools.AutoInviter.exe' Guid="12345678-1234-1234-1234-222222222226">
+                <File Id='Organization.WS.Tools.AutoInviter.exe' Source='MySourceFiles\Organization.WS.Tools.AutoInviter.exe' KeyPath="yes" Checksum="yes"/>
+            </Component>
+			<Component Id='Organization.WS.Tools.AutoInviter.exe.config' Guid="12345678-1234-1234-1234-222222222227">
+			    <File Id='Organization.WS.Tools.AutoInviter.exe.config' Source='MySourceFiles\Organization.WS.Tools.AutoInviter.exe.config' KeyPath="yes" Checksum="yes"/>
+			</Component>
+			<Component Id='Organization.WS.Tools.Config.dll' Guid="12345678-1234-1234-1234-222222222228">
+                <File Id='Organization.WS.Tools.Config.dll' Source='MySourceFiles\Organization.WS.Tools.Config.dll' KeyPath="yes" Checksum="yes"/>
+            </Component>
+			<Component Id='Organization.WS.Tools.Lib.dll' Guid="12345678-1234-1234-1234-222222222229">
+			    <File Id='Organization.WS.Tools.Lib.dll' Source='MySourceFiles\Organization.WS.Tools.Lib.dll' KeyPath="yes" Checksum="yes"/>
+			</Component>			
+			<Component Id='Organization.WS.Tools.ProjectCreatorAndProfileMapper.exe' Guid="6DB04028-9DEC-461f-AB51-ABC83D3A5286">
+                <File Id='Organization.WS.Tools.ProjectCreatorAndProfileMapper.exe' Source='MySourceFiles\Organization.WS.Tools.ProjectCreatorAndProfileMapper.exe' KeyPath="yes" Checksum="yes"/>
+            </Component>
+           <Component Id='Organization.WS.Tools.ProjectCreatorAndProfileMapper.exe.config' Guid="12345678-1234-1234-1234-222222222211">
+			    <File Id='Organization.WS.Tools.ProjectCreatorAndProfileMapper.exe.config' Source='MySourceFiles\Organization.WS.Tools.ProjectCreatorAndProfileMapper.exe.config' KeyPath="yes" Checksum="yes"/>
+			</Component>
+			<Component Id='Organization.WS.Tools.SAsAdapter.dll' Guid="12345678-1234-1234-1234-222222222212">
+                <File Id='Organization.WS.Tools.SAsAdapter.dll' Source='MySourceFiles\Organization.WS.Tools.SAsAdapter.dll' KeyPath="yes" Checksum="yes"/>
+            </Component>
+			<Component Id='Organization.WS.Tools.SpaceGenerator.exe' Guid="6122FC9D-FEBA-455a-A41E-9B463096EAC9">
+			    <File Id='Organization.WS.Tools.SpaceGenerator.exe' Source='MySourceFiles\Organization.WS.Tools.SpaceGenerator.exe' KeyPath="yes" Checksum="yes"/>
+            </Component>		
+	         <Component Id='Organization.WS.Tools.SpaceGenerator.exe.config' Guid="12345678-1234-1234-1234-222222222214">
+			    <File Id='Organization.WS.Tools.SpaceGenerator.exe.config' Source='MySourceFiles\Organization.WS.Tools.SpaceGenerator.exe.config' KeyPath="yes" Checksum="yes"/>
+			</Component>
+            <Component Id='Organization.WS.Tools.Starter.exe' Guid="12345678-1234-1234-1234-222222222215">
+                <File Id='Organization.WS.Tools.Starter.exe' Source='MySourceFiles\Organization.WS.Tools.Starter.exe' KeyPath="yes" Checksum="yes"/>
+            </Component>
+			
+			<Component Id='Organization.WS.Tools.Starter.exe.config' Guid="12345678-1234-1234-1234-222222222216">
+			    <File Id='Organization.WS.Tools.Starter.exe.config' Source='MySourceFiles\Organization.WS.Tools.Starter.exe.config' KeyPath="yes" Checksum="yes"/>
+			</Component>
+
+			<Component Id='Organization.WS.Tools.TemplateUploader.exe' Guid="12345678-1234-1234-1234-222222222217">
+                <File Id='Organization.WS.Tools.TemplateUploader.exe' Source='MySourceFiles\Organization.WS.Tools.TemplateUploader.exe' KeyPath="yes" Checksum="yes"/>
+            </Component>
+			<Component Id='Organization.WS.Tools.TemplateUploader.exe.config' Guid="12345678-1234-1234-1234-222222222218">
+			    <File Id='Organization.WS.Tools.TemplateUploader.exe.config' Source='MySourceFiles\Organization.WS.Tools.TemplateUploader.exe.config' KeyPath="yes" Checksum="yes"/>
+			</Component>
+	         <Component Id='Run.bat' Guid="12345678-1234-1234-1234-222222222219">
+			    <File Id='Run.bat' Source='MySourceFiles\Run.bat' KeyPath="yes" Checksum="yes"/>
+			</Component>	
+			<Component Id='template_ConsumerProfilePDMP.json' Guid="12345678-1234-1234-1234-222222222230">
+                <File Id='template_ConsumerProfilePDMP.json' Source='MySourceFiles\template_ConsumerProfilePDMP.json' KeyPath="yes" Checksum="yes"/>
+            </Component>
+			<Component Id='template_ConsumerProfileUnflatten.json' Guid="12345678-1234-1234-1234-222222222231">
+			    <File Id='template_ConsumerProfileUnflatten.json' Source='MySourceFiles\template_ConsumerProfileUnflatten.json' KeyPath="yes" Checksum="yes"/>
+			</Component>
+			
+           <Component Id='template_ProjectProfile.json' Guid="72D8E4F3-B995-4e88-8C72-22F0D1352FDA">
+                <File Id='template_ProjectProfile.json' Source='MySourceFiles\template_ProjectProfile.json' KeyPath="yes" Checksum="yes"/>
+            </Component>
+			<Component Id='template_req.json' Guid="12345678-1234-1234-1234-222222222233">
+			    <File Id='template_req.json' Source='MySourceFiles\template_req.json' KeyPath="yes" Checksum="yes"/>
+			</Component>
+	         <Component Id='template_space.json' Guid="12345678-1234-1234-1234-222222222234">
+			    <File Id='template_space.json' Source='MySourceFiles\template_space.json' KeyPath="yes" Checksum="yes"/>
+			</Component>					
+						
+			<Directory Id="passwordcreator" Name="PasswordCreator">
+			<Component Id='CreateSecureString.ps1' Guid="ccc98631-2261-4084-b019-b38d591b5757">
+			    <File Id='CreateSecureString.ps1' Source='MySourceFiles\PasswordCreator\CreateSecureString.ps1' KeyPath="yes" Checksum="yes"/>
+			</Component>
+			<Component Id='SymmetricKeyGen.exe' Guid="f940a397-6171-494f-bc89-0956c2d5ddb0">
+			    <File Id='SymmetricKeyGen.exe' Source='MySourceFiles\PasswordCreator\SymmetricKeyGen.exe' KeyPath="yes" Checksum="yes"/>
+			</Component>
+			</Directory>			
+			
+			
+        </DirectoryRef>	
+		<Feature Id="MainApplication" Title="Main Application" Level="1">
+        <ComponentRef Id='commonConfig.xml'/>
+        <ComponentRef Id='input.json'/>
+        <ComponentRef Id='Newtonsoft.Json.dll'/>
+        <ComponentRef Id='Newtonsoft.Json.xml'/>
+        <ComponentRef Id='Readme.md'/>
+        <ComponentRef Id='Organization.WS.Tools.AutoInviter.exe'/>
+        <ComponentRef Id='Organization.WS.Tools.AutoInviter.exe.config'/>
+        <ComponentRef Id='Organization.WS.Tools.Config.dll'/>
+        <ComponentRef Id='Organization.WS.Tools.Lib.dll'/>		
+        <ComponentRef Id='Organization.WS.Tools.ProjectCreatorAndProfileMapper.exe'/>
+        <ComponentRef Id='Organization.WS.Tools.ProjectCreatorAndProfileMapper.exe.config'/>
+		<ComponentRef Id='Organization.WS.Tools.SAsAdapter.dll'/>
+        <ComponentRef Id='Organization.WS.Tools.SpaceGenerator.exe'/>
+        <ComponentRef Id='Organization.WS.Tools.SpaceGenerator.exe.config'/>
+        <ComponentRef Id='Organization.WS.Tools.Starter.exe'/>
+        <ComponentRef Id='Organization.WS.Tools.Starter.exe.config'/>
+        <ComponentRef Id='Organization.WS.Tools.TemplateUploader.exe'/>
+        <ComponentRef Id='Organization.WS.Tools.TemplateUploader.exe.config'/>
+        <ComponentRef Id='Run.bat'/>
+        <ComponentRef Id='template_ConsumerProfilePDMP.json'/>
+        <ComponentRef Id='template_ConsumerProfileUnflatten.json'/>
+        <ComponentRef Id='template_ProjectProfile.json'/>
+        <ComponentRef Id='template_req.json'/>
+        <ComponentRef Id='template_space.json'/>
+		<ComponentRef Id='CreateSecureString.ps1'/>
+		<ComponentRef Id='SymmetricKeyGen.exe'/>
+
+        </Feature>
+
+    </Product>
+</Wix>

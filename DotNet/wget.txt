@@ -1,0 +1,1 @@
+wget --no-check-certificate -O my-jarname.war https://nexus.com/nexus/service/local/repositories/public/content/ant/ant/1.6.5/ant-1.6.5.jar

@@ -1,0 +1,23 @@
+nuget sources add -name nuget-group -source http://localhost:8081/repository/nuget-group/
+nuget sources
+nuget sources Disable -Name "nuget.org"
+nuget sources list
+nuget sources Remove -name nuget-group -source http://localhost:8081/repository/nuget-group/
+
+Create Spec File
+nuget spec
+
+Build Nuget Package
+nuget pack
+
+Push the package to nexus
+nuget push Aras.2.0.0.nupkg -source http://localhost:8081/repository/nuget-hosted/
+
+
+Store credentials in machine-level nuget.config (non-transferable)
+nuget sources add -Name prasanna -source http://localhost:8081/repository/nuget-group/ -User admin -pass admin123
+nuget setapikey b9a92386-bb49-3d29-9b42-1a753b1661e7 -source Prasanna
+
+Install Package
+nuget install RenArasFileExecution -OutputDirectory .\lib -ExcludeVersion
+

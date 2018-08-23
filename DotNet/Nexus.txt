@@ -1,0 +1,16 @@
+Upload to Nexus
+=================================
+
+Upload via Maven
+----------------
+mvn -X deploy:deploy-file -Durl=http://admin:admin123@10.244.48.250:8081/repository/maven-releases -DrepositoryId=nexus  -DgroupId=org.renault  -DartifactId=nexus -Dversion=1.0 -Dpackaging=war -Dfile="D:\Public\Softwares\helloworld.war 
+
+Upload via Jenkins
+------------------
+nexusArtifactUploader artifacts: [[artifactId: 'Aras', classifier: '', file: 'D:\\Public\\Softwares\\ARAS.zip', type: 'zip']], credentialsId: '7886d946-c28f-4140-9a2f-2b25193e8259', groupId: 'org.renault.test', nexusUrl: 'localhost:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'maven-releases', version: '6.0'
+
+
+
+Download via wget
+-----------------
+wget --no-check-certificate -O my-jarname.war https://nexus.com/nexus/service/local/repositories/public/content/ant/ant/1.6.5/ant-1.6.5.jar

@@ -1,0 +1,117 @@
+node('nodename')
+{
+	try{
+		deleteDir()
+		executebuild();
+	//	deleteDir();
+	}finally{
+  	deleteDir();
+	}
+}
+
+def executebuild(){
+
+    echo "Hello World!!!!!!"
+    def msbuild="C:\\Program Files (x86)\\MSBuild\\14.0\\Bin\\MSBuild.exe";
+    def nunit="F:\\NUnit.Runners.2.6.4\\tools\\nunit-console.exe";
+    def sonarruner="F:\\sonar-scanner-msbuild\\SonarScanner.MSBuild.exe";
+    def opencover="F:\\OpenCover\\OpenCover.Console.exe";
+    
+    stage('Checkout')
+    {
+		try 
+		{
+			  git 'file:///F:\\Deployment-workspace'
+		} catch (Exception e){
+		echo "Checkout Failed"
+		throw e;
+		}
+    }
+    
+     stage('Download Utilities')
+    {
+		try
+		{
+			bat 'wget --user=admin --password=admin123 -O aras-utility.zip http://10.222.222.222:8081/repository/aras-dev/org/company/product/product-utility/1.0/product-utility-1.0.zip'
+			unzip dir: '', glob: '', zipFile: 'product-utility.zip'	
+		}catch(Exception e){
+		echo "Download-utilites Failed"
+		throw e;
+		}
+    }
+	
+	stage('ConvertXMLtoCS')
+    {
+		try
+		{
+			def exists = fileExists 'Product/Server/method-config.xml'
+			if (exists) {
+				echo 'Method-config file exists'
+				bat 'ConvertPackageMethodsFromXmlToCs.bat'
+			} else {
+				echo 'Method-config file is not exist'
+				exit
+			}
+		}catch(Exception e){
+		echo "ConvertXMLtoCS Failed"
+		throw e;
+		}
+    }
+    
+    
+    stage('Build')
+    {
+		try
+		{
+	        bat """"${msbuild}" ".\\Test Cases"\\UnitTests.sln /t:build""";
+	        bat """"${msbuild}" ".\\Test Cases"\\IntegrationTests.sln /t:build""";
+		}catch(Exception e){
+		echo "Build Failed"
+		throw e;
+		}
+    }
+ 
+     stage('Unit Test')
+    {
+		try
+		{
+		bat """"${nunit}" ".\\Test Cases"\\CSharpMethods.UnitTests.nunit""";
+		//	bat """"${nunit}" ".\\Test Cases"\\IntegrationTests.nunit""";
+		}catch(Exception e){
+		echo "Unit Test Failed"
+		throw e;
+		}
+    }
+ 
+    stage('Code analysis')
+    {
+        //def NunitArgs=".\\Test Cases\\CSharpMethods.UnitTests.nunit /result=.\\Test Cases\\Output\\nunit.CSharpMethods.UnitTests.results.xml"
+		try
+		{
+		bat """"${sonarruner}" begin /k:"com.organization.sampleproject" /n:"com.organization.0ta.sampleproject" /v:"2.0" /d:sonar.host.url=http://sonarqube.intra.organization.fr /d:sonar.login="z023825" /d:sonar.password=Merc2166 /d:sonar.cs.opencover.reportsPaths="coverage.xml" /d:sonar.cs.nunit.reportsPaths="Test Cases\\Output\\nunit.CSharpMethods.UnitTests.results.xml" """;
+    		bat """"${msbuild}" ".\\Test Cases"\\UnitTests.sln /t:rebuild""";
+	    	bat """"${msbuild}" ".\\Test Cases"\\IntegrationTests.sln /t:rebuild""";
+		bat """"${nunit}" ".\\Test Cases"\\CSharpMethods.UnitTests.nunit /result="Test Cases"\\Output\\nunit.CSharpMethods.UnitTests.results.xml """; 
+		//bat """"${nunit}" ".\\Test Cases"\\IntegrationTests.nunit /result="Test Cases"\\Output\\IntegrationTests.results.xml""";
+		//bat '"F:\\OpenCover\\OpenCover.Console.exe" -target:F:\\NUnit.Runners.2.6.4\\tools\\nunit-console.exe -targetargs:"\\".\\Test Cases\\CSharpMethods.UnitTests.nunit\\" /result=\\".\\Test Cases\\Output\\nunit.CSharpMethods.UnitTests.results.xml\\"" -register:user -output:coverage.xml';
+		bat """ ${opencover} -target:"${nunit}" -targetargs:"\\".\\Test Cases\\CSharpMethods.UnitTests.nunit\\" /result=\\".\\Test Cases\\Output\\nunit.CSharpMethods.UnitTests.results.xml\\"" -register:user -output:coverage.xml """;
+		bat """"${sonarruner}" end /d:sonar.login="z023825" /d:sonar.password=Merc2166"""
+		}catch(Exception e){
+		echo "Code Analysis Failed"
+		throw e;
+		}
+    }
+	
+	stage('Upload to Nexus')
+    {
+		try
+		{
+	    	zip dir: '', glob: 'AML-Packages/**/*,AML-SQL-scripts/**/*,Data/**/*,Innovator/**/*', zipFile: '0ta-aras.zip'
+		bat 'mvn deploy:deploy-file -Durl=http://localhost:8081/repository/0ta-sample/ -DrepositoryId=nexus -DgroupId=org.organization.product  -DartifactId=OTA -Dversion=0.${env.BUILD_NUMBER}.0 -Dpackaging=zip -Dfile="0ta-product.zip"'
+		}catch(Exception e){
+		echo "Upload to Nexus Failed"
+		throw e;
+		}
+    }
+   
+}
