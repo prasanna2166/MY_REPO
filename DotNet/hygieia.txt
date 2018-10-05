@@ -1,0 +1,20 @@
+Hygieia Dashboard
+======================
+1. Download/Clone the package.
+2. Build the entire package through maven(run mvn clean package from root directory)
+3. Build will fail in "UI" module as it requires nodejs, npm and bower to be installed.
+4. Install nodejs which will have npm. Install bower from npm
+5. Configure git which is required to download the dependancies of bower 
+6. Build UI alone
+7. bower install --config.proxy=http://z023825:Merc2166@10.244.3.249:3128 --allow-root
+8. npm install --ignore-scripts --proxy=http://z023825:Merc2166@10.244.3.249:3128
+9. Do below changes in UI pom.xml to run maven as root user 
+<execution>
+    <id>bower install</id>
+    <goals>
+        <goal>bower</goal>
+    </goals>
+    <configuration>
+        <arguments>install --allow-root</arguments>      <!-- added --allow-root to argument -->
+    </configuration>
+</execution>
