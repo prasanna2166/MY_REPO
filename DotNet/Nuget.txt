@@ -9,7 +9,7 @@ nuget spec
 
 Build Nuget Package
 nuget pack
-nuget pack Project.csproj -Prop Configuration=Release -Build -Symbols -MSBuildVersion 14 -Properties "owners=organization;version=2.0.0"
+nuget pack Project.csproj -Prop Configuration=Release -Build -Symbols -MSBuildVersion 14 -Version 2.0.0
 
 Push the package to nexus
 nuget push Aras.2.0.0.nupkg -source http://localhost:8081/repository/nuget-hosted/
