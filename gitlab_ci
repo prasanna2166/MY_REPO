@@ -1,0 +1,36 @@
+stages:
+  - build
+  - deploy
+  - installation
+
+TASK1:
+  stage: build
+  before_script:
+     - echo "Before script section"
+  script:
+    - echo "This is to test gitlab ci"
+  tags:
+    - runnername
+   
+TASK2:
+  stage: deploy
+  script:
+    - docfx build .\\admin\\docfx.json -t ".\\admin\\templates\\folder
+  tags:
+    - runnername
+  variables:
+    GIT_STRATEGY: none  
+    
+TASK3:
+  stage: installation
+  script:
+    - echo "This will deploy html files to end server"
+    - echo y | pscp -r -pw password ".\\admin\\_site\\*"  "httpd_usr@hostname:/2aaaa/folder/Portal/admin"
+    - echo y | pscp -r  -pw password ".\\Portal\\*"  "httpd_usr@hostname:/2aaaa/folder/portal"
+  after_script:
+    - echo "Installation done"
+  tags:
+    - runnername
+  variables:
+    GIT_STRATEGY: none  
+    
