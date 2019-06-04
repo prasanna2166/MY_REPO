@@ -1,0 +1,4 @@
+Take  Permission:
+icacls F:\Aras\* /save F:\Aras\permission.txt /t
+Restore Permission:
+icacls F:\Aras\ /restore .\permission.txt
