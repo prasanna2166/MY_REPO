@@ -1,0 +1,7 @@
+gitlab-ci-multi-runner register -n -u "${gitlab-ci-url}" -r "${gitlab-token}" --name "$NAME-$i" \
+--executor docker --docker-image="${gitlab-image}" --docker-volumes "/var/run/docker.sock:/var/run/docker.sock" --docker-disable-cache \
+--cache-type "s3" --cache-s3-server-address "s3.amazonaws.com" --cache-s3-access-key "${aws-acess-key}" --cache-s3-secret-key "${aws-secret-key}" \
+--cache-s3-bucket-name "${aws-s3-bucket-name}" --cache-s3-bucket-location "${region}" --cache-cache-shared \
+--locked=false \
+--env "HTTPS_PROXY=${https_proxy}" --env "https_proxy=${https_proxy}" --env "HTTP_PROXY=${http_proxy}" --env "http_proxy=${http_proxy}" --env "NO_PROXY=${no_proxy}" --env "no_proxy=${no_proxy}"
+
