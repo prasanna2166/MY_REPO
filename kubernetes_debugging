@@ -1,0 +1,5 @@
+Error:
+proxyconnect tcp: tls: first record does not look like a TLS handshake
+Solution:
+change https proxy variable value to http 
+--------------------------------------------------------------------------------------
