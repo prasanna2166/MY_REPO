@@ -1,0 +1,125 @@
+node('node') {
+ try {
+  deleteDir()
+  executebuild();
+  // deleteDir();
+ } finally {
+  //deleteDir();
+ }
+}
+
+def executebuild() {
+ def repo_url = "https://gitlab.com/repo.git";
+ def env = "${Platform}";
+ def deploy_ws;
+ def deploy_script;
+ def git_repo_url;
+ def projname = "0TA";
+
+ try {
+  stage('Checkout') {
+   try {
+    bat 'mkdir build_automation'
+    dir('build_automation') {
+     git branch: 'master', credentialsId: 'GIT', url: repo_url;
+     //    commonutilities = load "./Scripts/common.groovy";
+    }
+   } catch (Exception e) {
+    echo "Checkout Failed";
+    throw e;
+   }
+  }
+
+  stage('Read Properties') {
+   try {
+    def propfilename = "build_automation" + "\\" + "Properties" + "\\" + projname + "\\" + "data.properties";
+    def Propfile = readProperties file: propfilename;
+    println Propfile;
+    def server = env + "_SERVER_NAME";
+    def user = env + "_USER_NAME";
+    user_name = Propfile.USER_NAME;
+    deploy_ws = Propfile.DEPLOY_WS;
+    deploy_script = Propfile.DEPLOY_SCRIPT;
+    git_repo_url = Propfile.GIT_REPO_URL;
+    string server_name = Propfile[server];
+    string user_name = Propfile[user];
+    zip dir: '', glob: '', zipFile: 'common.zip'
+   } catch (Exception e) {
+    echo "Read Properties failed";
+    throw e;
+   }
+  }
+
+  stage('Checkout') {
+   try {
+    bat """mkdir ${projname}""";
+    dir(projname) {
+     git branch: 'master', credentialsId: 'GIT', url: git_repo_url;
+    }
+   } catch (Exception e) {
+    echo "Checkout Failed";
+    throw e;
+   }
+  }
+
+
+  stage('Download Utilities') {
+   try {
+    bat """nuget locals all -clear"""
+    bat """nuget install utility.SP14 -ExcludeVersion -OutputDirectory ./bin -source Nexus"""
+    zip dir: '', glob: 'bin/**/*', zipFile: 'Utilities.zip'
+   } catch (Exception e) {
+    echo "Download-utilites Failed";
+    throw e;
+   }
+  }
+
+  stage('Compression') {
+   try {
+    zip dir: '', glob: "${projname}/**/*", zipFile: "Data.zip"
+   } catch (Exception e) {
+    echo "Upload to Nexus Failed";
+    throw e;
+   }
+  }
+
+
+  stage('DataInstallation') {
+    def arasscript_path = deploy_ws + "\\" + "build_automation" + "\\" + deploy_script;
+    def pjt_path = deploy_ws;
+   try {
+    if (env == "DEV") {
+     // Invoke Install data on DEV
+     try {
+      powershell """.\\build_automation\\${deploy_script} InstallData ${env}""";
+     } catch (Exception e) {
+      echo "Install data Failed"
+      throw e;
+     }
+    } else {
+     // Invoke Install data on other environments
+     try {
+      bat """ssh ${user_name}@${server_name} cmd /c if exist ${deploy_ws} rmdir /s /q ${deploy_ws}""";
+      bat """ssh ${user_name}@${server_name} cmd /c if not exist ${deploy_ws} mkdir ${deploy_ws}""";
+      bat """scp Data.zip ${user_name}@${server_name}:${deploy_ws}""";
+      bat """scp Utilities.zip ${user_name}@${server_name}:${deploy_ws}"""
+      bat """scp common.zip ${user_name}@${server_name}:${deploy_ws}"""
+      bat """ssh ${user_name}@${server_name} cmd /c powershell Expand-Archive -Force ${deploy_ws}\\Data.zip -DestinationPath ${deploy_ws}"""
+      bat """ssh ${user_name}@${server_name} cmd /c powershell Expand-Archive -Force ${deploy_ws}\\Utilities.zip -DestinationPath ${deploy_ws}"""
+      bat """ssh ${user_name}@${server_name} cmd /c powershell Expand-Archive -Force ${deploy_ws}\\common.zip -DestinationPath ${deploy_ws}"""
+      bat """ssh ${user_name}@${server_name} cmd /c "powershell ${arasscript_path} InstallData ${env}"""
+     } catch (Exception e) {
+      echo "Install data Failed"
+      throw e;
+     }
+    }
+   } catch (Exception e) {
+    echo "DataInstallation failed";
+    throw e;
+   }
+  }
+ } catch (Exception e) {
+  echo "Stage Failure";
+  throw e;
+ }
+}
