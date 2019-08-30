@@ -14,7 +14,7 @@ def executebuild() {
  def deploy_ws;
  def deploy_script;
  def git_repo_url;
- def projname = "0TA";
+ def projname = "test";
 
  try {
   stage('Checkout') {
@@ -66,7 +66,7 @@ def executebuild() {
   stage('Download Utilities') {
    try {
     bat """nuget locals all -clear"""
-    bat """nuget install utility.SP14 -ExcludeVersion -OutputDirectory ./bin -source Nexus"""
+    bat """nuget install utility -ExcludeVersion -OutputDirectory ./bin -source Nexus"""
     zip dir: '', glob: 'bin/**/*', zipFile: 'Utilities.zip'
    } catch (Exception e) {
     echo "Download-utilites Failed";
