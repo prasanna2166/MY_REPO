@@ -88,14 +88,14 @@ def executebuild(){
         //def NunitArgs=".\\Test Cases\\CSharpMethods.UnitTests.nunit /result=.\\Test Cases\\Output\\nunit.CSharpMethods.UnitTests.results.xml"
 		try
 		{
-		bat """"${sonarruner}" begin /k:"com.organization.sampleproject" /n:"com.organization.0ta.sampleproject" /v:"2.0" /d:sonar.host.url=http://sonarqube.intra.organization.fr /d:sonar.login="z023825" /d:sonar.password=Merc2166 /d:sonar.cs.opencover.reportsPaths="coverage.xml" /d:sonar.cs.nunit.reportsPaths="Test Cases\\Output\\nunit.CSharpMethods.UnitTests.results.xml" """;
+		bat """"${sonarruner}" begin /k:"com.organization.sampleproject" /n:"com.organization.Pjt.sampleproject" /v:"2.0" /d:sonar.host.url=http://sonarqube.intra.organization.fr /d:sonar.login="z023825" /d:sonar.password=Merc2166 /d:sonar.cs.opencover.reportsPaths="coverage.xml" /d:sonar.cs.nunit.reportsPaths="Test Cases\\Output\\nunit.CSharpMethods.UnitTests.results.xml" """;
     		bat """"${msbuild}" ".\\Test Cases"\\UnitTests.sln /t:rebuild""";
 	    	bat """"${msbuild}" ".\\Test Cases"\\IntegrationTests.sln /t:rebuild""";
 		bat """"${nunit}" ".\\Test Cases"\\CSharpMethods.UnitTests.nunit /result="Test Cases"\\Output\\nunit.CSharpMethods.UnitTests.results.xml """; 
 		//bat """"${nunit}" ".\\Test Cases"\\IntegrationTests.nunit /result="Test Cases"\\Output\\IntegrationTests.results.xml""";
 		//bat '"F:\\OpenCover\\OpenCover.Console.exe" -target:F:\\NUnit.Runners.2.6.4\\tools\\nunit-console.exe -targetargs:"\\".\\Test Cases\\CSharpMethods.UnitTests.nunit\\" /result=\\".\\Test Cases\\Output\\nunit.CSharpMethods.UnitTests.results.xml\\"" -register:user -output:coverage.xml';
 		bat """ ${opencover} -target:"${nunit}" -targetargs:"\\".\\Test Cases\\CSharpMethods.UnitTests.nunit\\" /result=\\".\\Test Cases\\Output\\nunit.CSharpMethods.UnitTests.results.xml\\"" -register:user -output:coverage.xml """;
-		bat """"${sonarruner}" end /d:sonar.login="z023825" /d:sonar.password=Merc2166"""
+		bat """"${sonarruner}" end /d:sonar.login="userid" /d:sonar.password=password"""
 		}catch(Exception e){
 		echo "Code Analysis Failed"
 		throw e;
@@ -106,8 +106,8 @@ def executebuild(){
     {
 		try
 		{
-	    	zip dir: '', glob: 'AML-Packages/**/*,AML-SQL-scripts/**/*,Data/**/*,Innovator/**/*', zipFile: '0ta-aras.zip'
-		bat 'mvn deploy:deploy-file -Durl=http://localhost:8081/repository/0ta-sample/ -DrepositoryId=nexus -DgroupId=org.organization.product  -DartifactId=OTA -Dversion=0.${env.BUILD_NUMBER}.0 -Dpackaging=zip -Dfile="0ta-product.zip"'
+	    	zip dir: '', glob: 'AML-Packages/**/*,AML-SQL-scripts/**/*,Data/**/*,Innovator/**/*', zipFile: 'Pjt-aras.zip'
+		bat 'mvn deploy:deploy-file -Durl=http://localhost:8081/repository/Pjt-sample/ -DrepositoryId=nexus -DgroupId=org.organization.product  -DartifactId=PJT -Dversion=0.${env.BUILD_NUMBER}.0 -Dpackaging=zip -Dfile="Pjt-product.zip"'
 		}catch(Exception e){
 		echo "Upload to Nexus Failed"
 		throw e;
