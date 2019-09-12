@@ -6,8 +6,8 @@ Hygieia Dashboard
 4. Install nodejs which will have npm. Install bower from npm
 5. Configure git which is required to download the dependancies of bower 
 6. Build UI alone
-7. bower install --config.proxy=http://z023825:Merc2166@10.244.3.249:3128 --allow-root
-8. npm install --ignore-scripts --proxy=http://z023825:Merc2166@10.244.3.249:3128
+7. bower install --config.proxy=http://username:password@10.244.244.244:3128 --allow-root
+8. npm install --ignore-scripts --proxy=http://username:password@10.244.244.244:3128
 9. Do below changes in UI pom.xml to run maven as root user 
 <execution>
     <id>bower install</id>
