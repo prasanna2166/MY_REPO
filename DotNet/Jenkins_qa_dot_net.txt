@@ -33,8 +33,8 @@ def executebuild() {
     {
         try
 		{
-		bat """wget --user=admin --password=admin123 -O OTA.zip http://localhost:8081/repository/0ta-sample/org/organization/product/OTA/${bld_version}/OTA-${bld_version}.zip"""
-			// unzip dir: '', glob: '', zipFile: 'OTA.zip'	
+		bat """wget --user=admin --password=admin123 -O PJT.zip http://localhost:8081/repository/0ta-sample/org/organization/product/PJT/${bld_version}/PJT-${bld_version}.zip"""
+			// unzip dir: '', glob: '', zipFile: 'PJT.zip'	
 		}catch(Exception e){
 		echo "Download-Package Failed"
 		throw e;
@@ -57,15 +57,15 @@ def executebuild() {
     {
 		try
 		{
-	   // zip dir: '', glob: '', zipFile: 'OTA.zip'
-	    bat """ssh adm2as@server cmd /c if exist rd /s /q F:\\Deployment-workspace"""
-	    bat """ssh adm2as@server cmd /c if not exist F:\\Deployment-workspace mkdir F:\\Deployment-workspace"""
-	    bat """scp OTA.zip adm2as@server:F:\\Deployment-workspace"""
-	    bat """scp Build_automation\\common.zip adm2as@server:F:\\Deployment-workspace"""
-	    bat """scp product-utility.zip adm2as@server:F:\\Deployment-workspace"""
-	    bat """ssh adm2as@s2900ars cmd /c powershell Expand-Archive -Force F:\\Deployment-workspace\\OTA.zip -DestinationPath F:\\Deployment-workspace\\"""
-		bat """ssh adm2as@server cmd /c powershell Expand-Archive -Force F:\\Deployment-workspace\\aras-utility.zip -DestinationPath F:\\Deployment-workspace\\"""
-		bat """ssh adm2as@server cmd /c powershell Expand-Archive -Force F:\\Deployment-workspace\\common.zip -DestinationPath F:\\Deployment-workspace\\build_automation"""
+	   // zip dir: '', glob: '', zipFile: 'PJT.zip'
+	    bat """ssh username@server cmd /c if exist rd /s /q F:\\Deployment-workspace"""
+	    bat """ssh username@server cmd /c if not exist F:\\Deployment-workspace mkdir F:\\Deployment-workspace"""
+	    bat """scp PJT.zip username@server:F:\\Deployment-workspace"""
+	    bat """scp Build_automation\\common.zip username@server:F:\\Deployment-workspace"""
+	    bat """scp product-utility.zip username@server:F:\\Deployment-workspace"""
+	    bat """ssh username@s2900ars cmd /c powershell Expand-Archive -Force F:\\Deployment-workspace\\PJT.zip -DestinationPath F:\\Deployment-workspace\\"""
+		bat """ssh username@server cmd /c powershell Expand-Archive -Force F:\\Deployment-workspace\\aras-utility.zip -DestinationPath F:\\Deployment-workspace\\"""
+		bat """ssh username@server cmd /c powershell Expand-Archive -Force F:\\Deployment-workspace\\common.zip -DestinationPath F:\\Deployment-workspace\\build_automation"""
 		}catch(Exception e){
 		echo "Deployment Failed"
 		throw e;
@@ -84,15 +84,15 @@ def executebuild() {
 		*/
 		// Invoke step-1 Database backup
         try {
-        bat """ssh adm2as@server cmd /c powershell F:\\Deployment-workspace\\build_automation\\DBAdm.ps1 Backup "Backup_created_for_${buildnumber}"  """
+        bat """ssh username@server cmd /c powershell F:\\Deployment-workspace\\build_automation\\DBAdm.ps1 Backup "Backup_created_for_${buildnumber}"  """
         } catch(Exception e){
 		echo "Database backup Failed"
         throw e;
         }
 		// Invoke step-2 Innovator backup
         try {
-        bat """ssh adm2as@server cmd /c powershell F:\\Deployment-workspace\\build_automation\\ARASMgr.ps1 Innovatorbackup"""
-        bat """scp  adm2as@server:F:\\Backup_Home\\Backup.zip ."""
+        bat """ssh username@server cmd /c powershell F:\\Deployment-workspace\\build_automation\\scriptMgr.ps1 Innovatorbackup"""
+        bat """scp  username@server:F:\\Backup_Home\\Backup.zip ."""
 		bat """mvn deploy:deploy-file -Durl=http://localhost:8081/repository/arascodetree-sample/ -DrepositoryId=nexus -DgroupId=org.organization.arascodetree  -DartifactId=codetree -Dversion=0.${env.BUILD_NUMBER}.0 -Dpackaging=zip -Dfile=Backup.zip"""
         } catch(Exception e){
 		echo "Innovator backup Failed"
@@ -100,28 +100,28 @@ def executebuild() {
         }
 		// Invoke step-3 Install Package
         try {
-        bat """ssh adm2as@server cmd /c powershell F:\\Deployment-workspace\\build_automation\\ARASMgr.ps1 InstallPackage"""
+        bat """ssh username@server cmd /c powershell F:\\Deployment-workspace\\build_automation\\scriptMgr.ps1 InstallPackage"""
         } catch(Exception e){
 		echo "Install Package Failed"
         throw e;
         }
 		// Invoke step-4 Install data
         try {
-        //bat 'ssh adm2as@server "powershell F:\\Deployment-workspace\\build_automation\\ARASMgr.ps1 InstallData"' 
+        //bat 'ssh username@server "powershell F:\\Deployment-workspace\\build_automation\\scriptMgr.ps1 InstallData"' 
         } catch(Exception e){
 		echo "Install data Failed"
         throw e;
         }
 		// Invoke step-5 Copy Innovator files
         try {
-        //bat 'ssh adm2as@server "powershell F:\\Deployment-workspace\\build_automation\\ARASMgr.ps1 Copyfiles"' 
+        //bat 'ssh username@server "powershell F:\\Deployment-workspace\\build_automation\\scriptMgr.ps1 Copyfiles"' 
         } catch(Exception e){
 		echo "Copy Innovator Files Failed"
         throw e;
         }
 		// Invoke step-6 Restart Aras
         try {
-        bat """ssh adm2as@server cmd /c iisreset /restart"""
+        bat """ssh username@server cmd /c iisreset /restart"""
         } catch(Exception e){
 		echo "IIS restart failed"
         throw e;
