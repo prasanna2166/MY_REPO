@@ -5,7 +5,7 @@ MSBUILD and NUNIT:
 2. Build the Project
 	msbuild.exe UnitTests.sln /t:Rebuild
 3. Run Unit Tests and Save Results in file.
-	D:\LocalData\z023825\Downloads\Aras_Test\Tests\packages\NUnit.Runners.2.6.4\tools\nunit-console.exe /result=Output\nunit.CSharpMethods.UnitTests.results.xml CSharpMethods.UnitTests.nunit 
+	D:\LocalData\username\Downloads\Aras_Test\Tests\packages\NUnit.Runners.2.6.4\tools\nunit-console.exe /result=Output\nunit.CSharpMethods.UnitTests.results.xml CSharpMethods.UnitTests.nunit 
 4. End Sonar Analysis
 	D:\Public\Softwares\sonar-scanner-msbuild\MSBuild.SonarQube.Runner.exe  end
 
