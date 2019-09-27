@@ -3,3 +3,8 @@ proxyconnect tcp: tls: first record does not look like a TLS handshake
 Solution:
 change https proxy variable value to http 
 --------------------------------------------------------------------------------------
+Error:
+kubectl Unable to connect to the server: dial tcp …:443: i/o timeout
+Solution:
+Add cluster details to kubectl config using gcloud command
+  gcloud container clusters get-credentials <clustername> --zone europe-west1
