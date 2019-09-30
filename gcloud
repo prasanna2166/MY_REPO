@@ -3,13 +3,14 @@ gcloud config set proxy/type http
 gcloud config set proxy/address 10.0.0.0
 gcloud config file name is .boto and wil be present in user home directory
 
-
-K8
-gcloud container clusters get-credentials <clustername> --zone europe-west1
-
 Set project:
 gcloud config set project PROJECT_ID
 gcloud config unset project
 
 List project:
 gcloud projects list
+
+K8
+gcloud container clusters get-credentials <clustername> --zone europe-west1
+
+
