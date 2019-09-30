@@ -7,8 +7,9 @@ gcloud config file name is .boto and wil be present in user home directory
 K8
 gcloud container clusters get-credentials <clustername> --zone europe-west1
 
-set project:
+Set project:
 gcloud config set project PROJECT_ID
 gcloud config unset project
 
-
+List project:
+gcloud projects list
