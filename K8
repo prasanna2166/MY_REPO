@@ -1,3 +1,70 @@
+Imperative Commands
+-------------------
+Create Pod
+	kubectl run --generator=run-pod/v1 nginx-pod --image=nginx:alpine
+
+Create Pod with label
+	kubectl run --generator=run-pod/v1 redis --image=redis:alpine -l tier=db
+
+Create Service
+	kubectl expose pod redis --port=6379 --name redis-service
+
+Create Deployment
+	 kubectl create deployment webapp --image=kodekloud/webapp-color
+
+Scale Deployment
+	kubectl scale deployment/webapp --replicas=3
+
+Apply label to node
+	kubectl label node node01 color=blue
+-----------------------------------------------------------------------------------------------------------------------
+
+Kube Resources
+-------------
+ C* all
+  * certificatesigningrequests (aka 'csr')
+  * clusterrolebindings
+  * clusterroles
+  * componentstatuses (aka 'cs')
+  * configmaps (aka 'cm')
+  * controllerrevisions
+  * cronjobs
+  * customresourcedefinition (aka 'crd')
+  * daemonsets (aka 'ds')
+  * deployments (aka 'deploy')
+  * endpoints (aka 'ep')
+  * events (aka 'ev')
+  * horizontalpodautoscalers (aka 'hpa')
+  * ingresses (aka 'ing')
+  * jobs
+  * limitranges (aka 'limits')
+  * namespaces (aka 'ns')
+  * networkpolicies (aka 'netpol')
+  * nodes (aka 'no')
+  * persistentvolumeclaims (aka 'pvc')
+  * persistentvolumes (aka 'pv')
+  * poddisruptionbudgets (aka 'pdb')
+  * podpreset
+  * pods (aka 'po')
+  * podsecuritypolicies (aka 'psp')
+  * podtemplates
+  * replicasets (aka 'rs')
+  * replicationcontrollers (aka 'rc')
+  * resourcequotas (aka 'quota')
+  * rolebindings
+  * roles
+  * secrets
+  * serviceaccounts (aka 'sa')
+  * services (aka 'svc')
+  * statefulsets (aka 'sts')
+  * storageclasses (aka 'sc')
+
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+
+Kubernetes Practice:
+-------------------
 root@kubedemo:~# kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0/aio/deploy/recommended.yaml
 namespace/kubernetes-dashboard created
 serviceaccount/kubernetes-dashboard created
