@@ -8,8 +8,20 @@ kubectl Unable to connect to the server: dial tcp …:443: i/o timeout
 Solution:
 Add cluster details to kubectl config using gcloud command
   gcloud container clusters get-credentials <clustername> --zone europe-west1
-  
+
+---------------------------------------------------------------------------------------
  Eror: kubeadm init fails  
   If Running less than 1CPU
     Solution : kubeadm init --ignore-preflight-errors=NumCPU
 
+---------------------------------------------------------------------------------------
+Error: 
+change@change-VirtualBox:~$ kubectl get nodes
+The connection to the server 10.0.2.15:6443 was refused - did you specify the right host or port?
+Solution:
+  root@kubedemo:~# sudo -i
+root@kubedemo:~# swapoff -a
+root@kubedemo:~# exit
+logout
+root@kubedemo:~# strace -eopenat kubectl version
+------------------------------------------------------------------------------------------
