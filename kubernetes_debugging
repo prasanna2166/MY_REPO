@@ -25,3 +25,11 @@ root@kubedemo:~# exit
 logout
 root@kubedemo:~# strace -eopenat kubectl version
 ------------------------------------------------------------------------------------------
+
+Error:
+There are two possibilities, either you haven't created an RBAC or it's somehow restricting the cluster access.
+
+By default, your clusterrolebinding has system:anonymous set which blocks the cluster access.
+
+Solution: 
+kubectl create clusterrolebinding cluster-system-anonymous --clusterrole=cluster-admin --user=system:anonymous
