@@ -3,3 +3,7 @@ VNC Password:　500658
 
 ECS uname : root
 ECS passwd: Prasanna@2166
+
+
+Created symlink /etc/systemd/system/multi-user.target.wants/kubelet.service → /lib/systemd/system/kubelet.service.
+
