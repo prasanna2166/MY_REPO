@@ -8,3 +8,8 @@ kubectl Unable to connect to the server: dial tcp …:443: i/o timeout
 Solution:
 Add cluster details to kubectl config using gcloud command
   gcloud container clusters get-credentials <clustername> --zone europe-west1
+  
+ Eror: kubeadm init fails  
+  If Running less than 1CPU
+    Solution : kubeadm init --ignore-preflight-errors=NumCPU
+
