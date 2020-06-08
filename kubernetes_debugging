@@ -33,3 +33,8 @@ By default, your clusterrolebinding has system:anonymous set which blocks the cl
 
 Solution: 
 kubectl create clusterrolebinding cluster-system-anonymous --clusterrole=cluster-admin --user=system:anonymous
+
+
+
+Dashboard URL:
+  https://147.139.34.239:6443/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/login
