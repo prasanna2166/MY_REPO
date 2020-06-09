@@ -34,7 +34,13 @@ By default, your clusterrolebinding has system:anonymous set which blocks the cl
 
 Solution: 
 kubectl create clusterrolebinding cluster-system-anonymous --clusterrole=cluster-admin --user=system:anonymous
+------------------------------------------------------------------------------------------
 
+Error:
+Remove taint from master
+Solution:
+kubectl taint nodes $(hostname) node-role.kubernetes.io/master:NoSchedule-
+------------------------------------------------------------------------------------------
 
 
 Dashboard URL:
