@@ -27,6 +27,7 @@ root@kubedemo:~# strace -eopenat kubectl version
 ------------------------------------------------------------------------------------------
 
 Error:
+  "message": "services \"kube-dns:dns\" is forbidden: User \"system:anonymous\" cannot get resource \"services/proxy\" in API group \"\" in the namespace \"kube-system\"",
 There are two possibilities, either you haven't created an RBAC or it's somehow restricting the cluster access.
 
 By default, your clusterrolebinding has system:anonymous set which blocks the cluster access.
