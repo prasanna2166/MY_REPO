@@ -48,7 +48,23 @@ Error:
 
 Solution:
   Check kubelet service and turn the service on if not active
+------------------------------------------------------------------------------------------
 
+More Log location of kubelet:
+root@kubedemo:/var/lib# cd kubelet/
+root@kubedemo:/var/lib/kubelet# ls -ltr
+total 36
+-rw-r--r--  1 root root  165 Jun  9 12:19 kubeadm-flags.env
+-rw-r--r--  1 root root  782 Jun  9 12:19 config.yaml
+drwxr-xr-x  2 root root 4096 Jun  9 12:19 pki
+drwxr-x---  2 root root 4096 Jun  9 12:20 plugins_registry
+drwxr-x---  2 root root 4096 Jun  9 12:20 plugins
+-rw-------  1 root root   62 Jun  9 12:20 cpu_manager_state
+drwxr-x--- 16 root root 4096 Jun 12 14:48 pods
+drwxr-xr-x  2 root root 4096 Jun 12 14:49 device-plugins
+drwxr-x---  2 root root 4096 Jun 16 13:10 pod-resources
+
+------------------------------------------------------------------------------------------
 
 Dashboard URL:
   https://147.139.34.239:6443/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/login
