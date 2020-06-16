@@ -24,6 +24,10 @@ root@kubedemo:~# swapoff -a
 root@kubedemo:~# exit
 logout
 root@kubedemo:~# strace -eopenat kubectl version
+
+
+We could also see this error when kube-api is down.
+skipping: failed to "StartContainer" for "calico-kube-controllers" with CrashLoopBackOff: "back-off 5m0s restarting failed 
 ------------------------------------------------------------------------------------------
 
 Error:
