@@ -49,7 +49,7 @@ Error:
 Solution:
   Check kubelet service and turn the service on if not active
 ------------------------------------------------------------------------------------------
-
+Kubelet LOGS:
 More Log location of kubelet:
 root@kubedemo:/var/lib# cd kubelet/
 root@kubedemo:/var/lib/kubelet# ls -ltr
@@ -64,6 +64,8 @@ drwxr-x--- 16 root root 4096 Jun 12 14:48 pods
 drwxr-xr-x  2 root root 4096 Jun 12 14:49 device-plugins
 drwxr-x---  2 root root 4096 Jun 16 13:10 pod-resources
 
+Kubelet CONFIG:
+/usr/bin/kubelet --bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.coonf --kubeconfig=/etc/kubernetes/kubelet.conf --config=/var/lib/kubelet/config.yaml --cgroup-driver=cgroupfs --network-plugin=cni --pod-infra-container-image=k8s.gcr.io/pause:3.2 --resolv-conf=/run/systemd/resolve/resolv.conf
 ------------------------------------------------------------------------------------------
 
 Dashboard URL:
