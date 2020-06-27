@@ -1,0 +1,4 @@
+Network Interfaces:
+   1. Bridge  -  Guest as just another PC on host's network. Host, Network PC, Bridged guests and internet and guest can all communicate on the one Bridged network card.
+   2. NAT  - To Connect Internet
+   3. Host-Only   -  Host to Guest communication
