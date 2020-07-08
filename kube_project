@@ -1,0 +1,45 @@
+Key Concepts
+Source code SHOULD BE stored within GitlabEE with pipelines already defined.
+One cluster Kubernetes for Automation (Build, Deploy)
+One Gitlab Runner per application inside cicd namespace in automation kubernetes cluster.
+Each Gitlab runner is running with a service account <uniquesia-uniqueirn-runner> (for good isolation between application's jobs).
+Each Gitlab runner have a Kubernetes Role (inside cicd namespace)
+Service account <sia-irn-runner> is attached to this Kubernetes Role using a RoleBinding.
+For each Gitlab runner, we create a <sia-irn-builder> namespace to run GitlabCI Jobs inside.
+Jobs running with a service account that have a limited permission inside the <uniquesia-uniqueirn-builder> namespace.
+One Job are not allowed to see other jobs.
+Runners have their Resource Quota (MUST BE defined)
+After tests and build steps job MUST push a Docker image inside DEV DTR.
+Once the image is available inside DEV DTR, Helm is launched to install/upgrade a release inside the RUN (dev) Kubernetes cluster.
+Helm must use a GCP Service account that have one permission (PortForward)
+Tiller SHOULD BE installed inside each namespace and can interact with artifcatory to pull Charts.
+Tiller is running as a <tiller> service account with a limited permission inside the specified namespace.
+Tiller Kubernetes Service MUST BE Deleted. (Security reason)
+Tiller Kubernetes Deployment MUST BE patched to listen only on localhost.
+One all validation steps are satisfied, Helm can install/upgrade releases in RE7/OPE environments.
+For RE7/OPE env, architecture process can be different (MUST BE defined)
+What we need to prepare for each application
+
+For each application we should create:
+
+Inside GCP.
+Service Account <sia-irn-env-sa> with a custom GCP Role (Deny All Inside the <env> cluster)
+This SA can list clusters and get credentials.
+
+Inside the GKE Automation Cluster.
+Namespace <uniquesia-uniqueirn-builder>
+ResourceQuota for this namespace (MUST BE defined)
+Gitlab Dedicated Runner
+Service Account (cicd)
+Role (cicd)
+RoleBinding (cicd)
+Job Service account (uniquesia-uniqueirn-builder)
+Job Role (uniquesia-uniqueirn-builder)
+Job RoleBinding (uniquesia-uniqueirn-builder)
+Release of gitlab-runner chart.
+Inside DEV/RE7/OPE Kubernetes clusters.
+Namspace <uniquesia-uniqueirn>
+ResourceQuota for a this namespace (Default ResourceQuota MUST BE Defined)
+Patched tiller inside the namespace with Specific Kubernetes Role (Do only what the application Chart need).
+Role (Just PortForward to tiller Pod inside the <uniquesia-uniqueirn> namespace)
+RoleBinding (To bind the gcp Service Account with the Just PortForward Port Role)
