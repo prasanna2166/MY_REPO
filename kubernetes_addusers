@@ -1,14 +1,19 @@
 Client End
+===========
 1. Create a key using below command for the user
   openssl genrsa -out user.key 2048
 2. Create CSR for the key which is generated using first step
   openssl req -new -key user.key -out user.csr -subj "/CN=user"
-  
+ ==================================================================================================================================================================================== 
  Server End
+ ==========
 CSR created by user can be signed by couple of methods.
-1. First method
+1. Sign CSR 
+First method
+================
   openssl x509 -req -in user.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out user.crt -days 1000
-2. Second method (create csr)
+Second method (create csr)
+==========================
 apiVersion: certificates.k8s.io/v1beta1
 kind: CertificateSigningRequest
 metadata:
@@ -24,3 +29,9 @@ spec:
   - client auth
 
 Administrator will accept or deny csr and create user.crt
+
+2. once approved generate crt of the user and share it
+    kubectl get csr vagrant -o jsonpath='{.status.certificate}' | base64 --decode > vagrant.crt
+3. Generate certificate authoriy (this is common and it will be required by every user to connect to kube api)
+kubectl config view -o jsonpath='{.clusters[0].cluster.certificate-authority-data}' --raw | base64 --decode - > k8s-ca.crt
+====================================================================================================================================================================================
