@@ -78,5 +78,27 @@ Kubelet CONFIG:
 /usr/bin/kubelet --bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.coonf --kubeconfig=/etc/kubernetes/kubelet.conf --config=/var/lib/kubelet/config.yaml --cgroup-driver=cgroupfs --network-plugin=cni --pod-infra-container-image=k8s.gcr.io/pause:3.2 --resolv-conf=/run/systemd/resolve/resolv.conf
 ------------------------------------------------------------------------------------------
 
+
+Add new hostname/IP to kube-api server certificate
+1. Generate kubeadm configuration file
+kubectl -n kube-system get configmap kubeadm-config -o jsonpath='{.data.ClusterConfiguration}' > kubeadm.yaml
+2. Add CertSans as below in kubeadm.yaml file
+  apiServer:
+  certSANs:
+  - "172.29.50.162"
+  - "k8s.domain.com"
+  - "other-k8s.domain.net"
+  extraArgs:
+    authorization-mode: Node,RBAC
+  timeoutForControlPlane: 4m0s
+3. Move old api certifiacate files
+  mv /etc/kubernetes/pki/apiserver.{crt,key} ~
+4. kubeadm init phase certs apiserver --config kubeadm.yaml
+
+------------------------------------------------------------------------------------------
+
+
+
+
 Dashboard URL:
   https://147.139.34.239:6443/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/login
