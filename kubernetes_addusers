@@ -1,37 +1,63 @@
-Client End
-===========
-1. Create a key using below command for the user
-  openssl genrsa -out user.key 2048
-2. Create CSR for the key which is generated using first step
-  openssl req -new -key user.key -out user.csr -subj "/CN=user"
- ==================================================================================================================================================================================== 
- Server End
- ==========
-CSR created by user can be signed by couple of methods.
-1. Sign CSR 
-First method
-================
-  openssl x509 -req -in user.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out user.crt -days 1000
-Second method (create csr)
-==========================
-apiVersion: certificates.k8s.io/v1beta1
-kind: CertificateSigningRequest
-metadata:
-  name: vagrant
-spec:
-  groups:
-  - system:authenticated
-  - vagrant
-  request: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0KTUlJQ1Z6Q0NBVDhDQVFBd0VqRVFNQTRHQTFVRUF3d0hkbUZuY21GdWREQ0NBU0l3RFFZSktvWklodmNOQVFFQgpCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFLOG5YdlVQTHBGRWp2cXBxYURCOHVndHBQZ0ZUY0djK0krRXNXZW8xaTFCCmE4Ui9yaEJqRTBKeFhpUGZoMUJOd3lrcWFxbm1QNzBYanpHVDNyY1FSL0tOaHZWV1NYOFhoMmFuWWtkclRlVnIKTFN1NXk4SjdzeHVXYVh6UW1jZHExdmdzN3d6VmlkcGJsUVI0RnIyR05SelZGZ2xxYW1qbmYyMlAxZHZuYXFOUwpDMW9GTU5iZDMzRUtXZUY1MW1Sa0JuVnFHUEpER1lsRnNjYlhBa0ZrNUxUdE4xWDl4NW1TV29kTHBwd3dvQWxMCmhvQ2JjYUZ3R3pHSkg5dnVlR2x0Ylh4TksvUnozdDZabmdWaGNNc3BKNFZyMGRTMmRITFFSeVNEZXNxVnh1bHYKbnVjN2FHc3FaQ2taNmdxZnFGendPdzh1M3dvbFVzb2RyUzA1VDVqL01KRUNBd0VBQWFBQU1BMEdDU3FHU0liMwpEUUVCQ3dVQUE0SUJBUUNRQjc3bTVrcmFkWTlma2NiOHBRUDdxdmd0aXRrOSs4Tm5IUVFORUR6dEJhTm5MWGp5CkNwc25ZZ0Y3SnIxMXZZWTZFNlJJeXkvbnYrWXdOUkxjdGhjSTlXbVhpTzJsZXhPSU14WkZ4SUo4eE5aU011VzkKWFhkMzYxZWhhYjN2T2JvSXRIZzJWUUlKUlBISWt6Smd3QkxPRTV4VEV4c1Rnc085Qmg5ZytXVjJ6YTdlOFFiVAp4WEhWdkF5MjFHN1NNbEdBNVNaSGdwN1lzY2MwYlB3NERPaDhtR09hRktncHk2bVkvWXFFMThQSDJjVmRlN3RSClVNbnlqYXVzWWEyUzFaTXdvN1FuSGkyQVViaUtYV2JyZUtKWk9weTFJMUdvZGhvL3JWa1ZSZnh6dlN3YnNqemcKQ2hDeU53WTVXUEM3TEhPbG94TlBwRGJnRFpGVDZsMVZOTVpyCi0tLS0tRU5EIENFUlRJRklDQVRFIFJFUVVFU1QtLS0tLQo=
-  usages:
-  - digital signature
-  - key encipherment
-  - client auth
+THROUGH CERTIFICATE
+====================
+      Client End
+      ===========
+      1. Create a key using below command for the user
+        openssl genrsa -out user.key 2048
+      2. Create CSR for the key which is generated using first step
+        openssl req -new -key user.key -out user.csr -subj "/CN=user"
+       ==================================================================================================================================================================================== 
+       Server End
+       ==========
+      CSR created by user can be signed by couple of methods.
+      1. Sign CSR 
+      First method
+      ================
+        openssl x509 -req -in user.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out user.crt -days 1000
+      Second method (create csr)
+      ==========================
+      apiVersion: certificates.k8s.io/v1beta1
+      kind: CertificateSigningRequest
+      metadata:
+        name: vagrant
+      spec:
+        groups:
+        - system:authenticated
+        - vagrant
+        request: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0KTUlJQ1Z6Q0NBVDhDQVFBd0VqRVFNQTRHQTFVRUF3d0hkbUZuY21GdWREQ0NBU0l3RFFZSktvWklodmNOQVFFQgpCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFLOG5YdlVQTHBGRWp2cXBxYURCOHVndHBQZ0ZUY0djK0krRXNXZW8xaTFCCmE4Ui9yaEJqRTBKeFhpUGZoMUJOd3lrcWFxbm1QNzBYanpHVDNyY1FSL0tOaHZWV1NYOFhoMmFuWWtkclRlVnIKTFN1NXk4SjdzeHVXYVh6UW1jZHExdmdzN3d6VmlkcGJsUVI0RnIyR05SelZGZ2xxYW1qbmYyMlAxZHZuYXFOUwpDMW9GTU5iZDMzRUtXZUY1MW1Sa0JuVnFHUEpER1lsRnNjYlhBa0ZrNUxUdE4xWDl4NW1TV29kTHBwd3dvQWxMCmhvQ2JjYUZ3R3pHSkg5dnVlR2x0Ylh4TksvUnozdDZabmdWaGNNc3BKNFZyMGRTMmRITFFSeVNEZXNxVnh1bHYKbnVjN2FHc3FaQ2taNmdxZnFGendPdzh1M3dvbFVzb2RyUzA1VDVqL01KRUNBd0VBQWFBQU1BMEdDU3FHU0liMwpEUUVCQ3dVQUE0SUJBUUNRQjc3bTVrcmFkWTlma2NiOHBRUDdxdmd0aXRrOSs4Tm5IUVFORUR6dEJhTm5MWGp5CkNwc25ZZ0Y3SnIxMXZZWTZFNlJJeXkvbnYrWXdOUkxjdGhjSTlXbVhpTzJsZXhPSU14WkZ4SUo4eE5aU011VzkKWFhkMzYxZWhhYjN2T2JvSXRIZzJWUUlKUlBISWt6Smd3QkxPRTV4VEV4c1Rnc085Qmg5ZytXVjJ6YTdlOFFiVAp4WEhWdkF5MjFHN1NNbEdBNVNaSGdwN1lzY2MwYlB3NERPaDhtR09hRktncHk2bVkvWXFFMThQSDJjVmRlN3RSClVNbnlqYXVzWWEyUzFaTXdvN1FuSGkyQVViaUtYV2JyZUtKWk9weTFJMUdvZGhvL3JWa1ZSZnh6dlN3YnNqemcKQ2hDeU53WTVXUEM3TEhPbG94TlBwRGJnRFpGVDZsMVZOTVpyCi0tLS0tRU5EIENFUlRJRklDQVRFIFJFUVVFU1QtLS0tLQo=
+        usages:
+        - digital signature
+        - key encipherment
+        - client auth
 
-Administrator will accept or deny csr and create user.crt
+      Administrator will accept or deny csr and create user.crt
 
-2. once approved generate crt of the user and share it
-    kubectl get csr vagrant -o jsonpath='{.status.certificate}' | base64 --decode > vagrant.crt
-3. Generate certificate authoriy (this is common and it will be required by every user to connect to kube api)
-kubectl config view -o jsonpath='{.clusters[0].cluster.certificate-authority-data}' --raw | base64 --decode - > k8s-ca.crt
-====================================================================================================================================================================================
+      2. once approved generate crt of the user and share it
+          kubectl get csr vagrant -o jsonpath='{.status.certificate}' | base64 --decode > vagrant.crt
+      3. Generate certificate authoriy (this is common and it will be required by every user to connect to kube api)
+      kubectl config view -o jsonpath='{.clusters[0].cluster.certificate-authority-data}' --raw | base64 --decode - > k8s-ca.crt
+ ====================================================================================================================================================================================
+THROUGH SECRET
+==================
+kubectl create sa alice
+secret=$(kubectl get sa alice -o json | jq -r .secrets[].name)
+kubectl get secret $secret -o json | jq -r '.data["ca.crt"]' | base64 -D > ca.crt
+user_token=$(kubectl get secret $secret -o json | jq -r '.data["token"]' | base64 -D)
+# get current context
+c=$(kubectl config current-context)
+# get cluster name of context
+name=$(kubectl config get-contexts $c | awk '{print $3}' | tail -n 1)
+# get endpoint of current context 
+endpoint=$(kubectl config view -o jsonpath="{.clusters[?(@.name == \"$name\")].cluster.server}")
+ Fresh machine:
+kubectl config set-cluster cluster-staging \
+  --embed-certs=true \
+  --server=$endpoint \
+  --certificate-authority=./ca.crt
+kubectl config set-credentials alice-staging --token=$user_token
+kubectl config set-context alice-staging \
+  --cluster=cluster-staging \
+  --user=alice-staging \
+  --namespace=alice
+  kubectl config use-context alice-staging
+
