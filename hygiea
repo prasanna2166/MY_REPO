@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+
+function usage()
+{
+ echo -e "\nUsage:
+    1) hygieia.sh  <modulename>
+    Arguments are received via command line;
+
+    Examples
+        hygieia.sh UI api
+        hygieia.sh api-audit"
+ echo -e "\n"
+ exit 0
+}
+
+function java_check()
+{
+  if [ -z "$JAVA_HOME" ] ; then
+    JAVACMD=`which java`
+  else
+    JAVACMD="$JAVA_HOME/bin/java"
+  fi
+
+  if [ ! -x "$JAVACMD" ] ; then
+  echo "The JAVA_HOME environment variable is not defined correctly" >&2
+  echo "This environment variable is needed to run this program" >&2
+  echo "NB: JAVA_HOME should point to a JDK not a JRE" >&2
+  exit 1
+fi
+}
+
+function api()
+{
+  ## Check for Java #
+  java_check;
+  ## if it is present start api
+command_line_args="-jar ${api_jar} --spring.config.location=${api_config} -Djasypt.encryptor.password=hygieiasecret"
+exec "$JAVACMD" \
+  $command_line_args &>/dev/null &
+}
+
+function api_audit()
+{
+  ## Check for Java #
+  java_check;
+  ## if it is present start api-audit
+command_line_args="-jar ${api_audit_jar} --spring.config.location=${api_audit_config} -Djasypt.encryptor.password=hygieiasecret"
+exec "$JAVACMD" \
+  $command_line_args &>/dev/null &
+}
+
+function ui()
+{
+  ## Check for Java #
+  java_check;
+  ## if it is present start UI
+  cd ${ui_home};
+  gulp serve:ghost-mode &>/dev/null &
+}
+
+function jenkins_collectors()
+{
+  ## Check for Java #
+  java_check;
+  ## if it is present start jenkins collector
+  command_line_args="-jar ${collectors_jenkins_jar} --spring.config.location=${collectors_jenkins_config} -Djasypt.encryptor.password=hygieiasecret"
+  exec "$JAVACMD" \
+    $command_line_args &>/dev/null &
+}
+
+function gitlab_collectors()
+{
+  ## Check for Java #
+  java_check;
+  ## if it is present start gitlab collector
+  command_line_args="-jar ${colelctors_gitlab_jar} --spring.config.location=${collectors_gitlab_config} -Djasypt.encryptor.password=hygieiasecret"
+  exec "$JAVACMD" \
+    $command_line_args &>/dev/null &
+}
+
+export hygieia_home="/dev/Hygieia-Hygieia-2.0.4"
+export api_jar=${hygieia_home}/api/target/api.jar
+export api_config=${hygieia_home}/api/api.properties
+export api_audit_jar=${hygieia_home}/api-audit/target/apiaudit.jar
+export api_audit_config=${hygieia_home}/api-audit/api-audit.properties
+export collectors_jenkins_jar=${hygieia_home}/collectors/build/jenkins/target/jenkins-build-collector-2.0.5-SNAPSHOT.jar
+export collectors_jenkins_config=${hygieia_home}/collectors/build/jenkins/
+export colelctors_gitlab_jar=${hygieia_home}/collectors/scm/gitlab/target/gitlab-scm-collector-2.0.5-SNAPSHOT.jar
+export collectors_gitlab_config=${hygieia_home}/collectors/scm/gitlab/
+export ui_home=${hygieia_home}/UI/
+
+
+
+
+echo -e "Generate lock file"
+lock_file=hygieia.lock;
+pid=$(date +"%j%H%M%S")
+file=${lock_file}_{pid}
+#touch $file;
+
+
+
+if [[ $# == 0 ]]; then
+  api
+  api_audit
+  ui
+  jenkins_collectors
+  gitlab_collectors
+fi
+
+
+
