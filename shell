@@ -1,0 +1,3 @@
+Change columns using awk
+
+cat file.txt | grep -w TD | awk '$2="OPER"' FS=";" OFS=";"
