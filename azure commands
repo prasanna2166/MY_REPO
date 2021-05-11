@@ -1,0 +1,2 @@
+#to get princialname
+az ad signed-in-user show --query userPrincipalName -o tsv
