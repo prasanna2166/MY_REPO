@@ -1,2 +1,9 @@
 #to get princialname
 az ad signed-in-user show --query userPrincipalName -o tsv
+
+##to connect azure container registry
+{
+ "credHelpers": {
+     "aws_account_id.dkr.ecr.region.amazonaws.com": "ecr-login"
+ }
+}
