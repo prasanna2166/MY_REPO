@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: mytestrepomytomcattest10 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mytestrepomytomcattest10
+  template:
+    metadata:
+      labels:
+        app: mytestrepomytomcattest10 
+    spec:
+      containers:
+        - name: mytestrepomytomcattest10 
+          image: mytestregistry2166.azurecr.io/mytestrepomytomcattest10
+          ports:
+          - containerPort: 8080
